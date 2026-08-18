@@ -11,7 +11,7 @@ const posts = (await getCollection('blog', (p) => !p.data.draft)).sort(
 
 <Page title="Blog" description="Notes on the writing life, planning, and stationery by Viviana Acosta.">
   <section class="section container">
-    <SectionHeading eyebrow="Blog" title="Notes on the writing life" />
+    <SectionHeading eyebrow="Blog" title="Notes on the writing life" level="h1" />
     {
       posts.map((post) => (
         <PostCard

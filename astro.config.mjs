@@ -6,7 +6,11 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://vivianaacosta.com',
   output: 'static',
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      filter: (page) => !page.includes('/thanks'),
+    }),
+  ],
   image: {
     // Astro's built-in sharp service builds the AVIF/WebP ladders from the
     // pre-graded JPEG masters in src/assets/photos (never from HEIC).

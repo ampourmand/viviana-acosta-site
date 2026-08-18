@@ -21,6 +21,8 @@ export interface Dot {
   /** 0 = nearest/brightest .. 1 = farthest/dimmest (pre-ramp ink value) */
   ink: number;
   a: number;
+  /** copper accent flag, assigned from the stable generation index */
+  accent?: boolean;
 }
 
 export interface Edge {
@@ -438,6 +440,11 @@ export class Orb {
   private draw(t: number): void {
     const { ctx, cfg } = this;
     const frame = modes[cfg.mode](cfg, t);
+    // Accent by generation index (stable across frames), BEFORE the z-sort
+    // reorders draw indices; keying accents to draw order makes them flicker.
+    frame.dots.forEach((d, gi) => {
+      d.accent = hash2(gi, cfg.seed) < cfg.accentRatio;
+    });
     frame.dots.sort((a, b) => a.z - b.z);
     ctx.clearRect(0, 0, cfg.size, cfg.size);
 
@@ -460,12 +467,10 @@ export class Orb {
       ctx.stroke();
     }
 
-    let i = 0;
     for (const d of frame.dots) {
       if (d.a < 0.02) continue;
-      const accent = hash2(i++, cfg.seed) < cfg.accentRatio;
       ctx.globalAlpha = Math.min(1, d.a);
-      ctx.fillStyle = inkColor(d.ink, accent);
+      ctx.fillStyle = inkColor(d.ink, d.accent === true);
       ctx.beginPath();
       ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
       ctx.fill();

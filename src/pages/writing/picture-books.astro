@@ -20,7 +20,7 @@ const rendered = await Promise.all(books.map(async (work) => ({ work, r: await r
   description="Picture books by Viviana Acosta, including I Can't See! How the Hubble Space Telescope Got Glasses."
 >
   <section class="section container">
-    <SectionHeading eyebrow="Writing" title="Picture Books" />
+    <SectionHeading eyebrow="Writing" title="Picture Books" level="h1" />
 
     {
       rendered.map(({ work, r }) => (

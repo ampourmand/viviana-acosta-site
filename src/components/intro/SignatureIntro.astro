@@ -8,7 +8,15 @@ import SignatureSvg from './SignatureSvg.astro';
 import { site } from '@data/site';
 ---
 
-<div class="sig-overlay" data-sig-overlay data-state="idle" hidden>
+<div
+  class="sig-overlay"
+  data-sig-overlay
+  data-state="idle"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Viviana Acosta signature introduction"
+  hidden
+>
   <div class="sig-bg" data-sig-bg aria-hidden="true"></div>
   <button class="sig-skip ui" type="button" data-sig-skip>Skip</button>
 

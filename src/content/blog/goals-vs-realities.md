@@ -21,7 +21,7 @@ Today, the questions elude me. Like a dog who walks into each room asking, why a
 
 My mind is frazzled. All. The. Time. 
 
-Enter: [my planners](https://www.escritoraviviana.com/blog/planning-for-2023). (Yes, that’s plural). Why? Why to meet my goals, of course. Goals I set for myself at the end of the calendar year for the upcoming year, only to be reminded of around my birthday in the late third quarter, that I have had pretty much no chance of achieving.
+Enter: [my planners](/blog/planning-for-2023). (Yes, that’s plural). Why? Why to meet my goals, of course. Goals I set for myself at the end of the calendar year for the upcoming year, only to be reminded of around my birthday in the late third quarter, that I have had pretty much no chance of achieving.
 
 Despite the frenzy of life as a full time working mother at a demanding job with two young children and as equally as demanding (and often more destructive) dog, I set goals for myself. Only for my reality to sucker punch them into oblivion.
 

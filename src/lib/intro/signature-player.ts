@@ -40,12 +40,24 @@ export function createSignaturePlayer(overlay: HTMLElement): SignaturePlayer {
   const camera = overlay.querySelector<HTMLElement>('[data-sig-camera]')!;
   const nib = svg.querySelector<SVGGElement>('[data-sig-nib]')!;
   const subtitle = overlay.querySelector<HTMLElement>('[data-sig-subtitle]');
-  const prompt = overlay.querySelector<HTMLElement>('[data-sig-prompt]');
+  const prompt = overlay.querySelector<HTMLElement>('[data-sig-enter]');
 
   let state: PlayerState = 'idle';
   let tl: gsap.core.Timeline | null = null;
   let dismissedCb: (() => void) | null = null;
   let cameraTicker: (() => void) | null = null;
+  let startScale = 2.3;
+
+  /** Kill every animation this player may have started outside `tl`. */
+  function killLooseTweens(): void {
+    gsap.killTweensOf([cameraPos, camera, nib, overlay]);
+    if (subtitle) gsap.killTweensOf(subtitle);
+    if (prompt) gsap.killTweensOf(prompt);
+    for (const s of strokes) {
+      gsap.killTweensOf(s.wet);
+      if (s.pool) gsap.killTweensOf(s.pool);
+    }
+  }
 
   // Build runtime stroke table; guides are detached paths used only for
   // point sampling (lengths come precomputed from build time).
@@ -100,8 +112,9 @@ export function createSignaturePlayer(overlay: HTMLElement): SignaturePlayer {
     // top-left, screen position of point P: origin + (P - origin)*s + t.
     const tx = focusX - (originX + (nibBaseX - originX) * scale);
     const ty = focusY - (originY + (nibBaseY - originY) * scale);
-    // Blend toward no correction as scale approaches 1 so settle lands at rest.
-    const k = Math.min(1, Math.max(0, (scale - 1) / 1.3));
+    // Blend toward no correction as scale approaches 1 so settle lands at
+    // rest; normalized by the actual starting zoom so mobile tracks too.
+    const k = Math.min(1, Math.max(0, (scale - 1) / Math.max(0.001, startScale - 1)));
     camera.style.transform = `translate(${tx * k}px, ${ty * k}px) scale(${scale})`;
   }
 
@@ -142,6 +155,14 @@ export function createSignaturePlayer(overlay: HTMLElement): SignaturePlayer {
           ease,
           onStart: () => {
             nibPos.active = stroke.id;
+            // Ink pools where the pen touches down.
+            if (stroke.pool) {
+              gsap.fromTo(
+                stroke.pool,
+                { opacity: 0.55, scale: 0.4 },
+                { opacity: 0, scale: 1.5, duration: 1.4, ease: 'power2.out' },
+              );
+            }
           },
           onUpdate: () => {
             const t = proxy.t;
@@ -156,15 +177,8 @@ export function createSignaturePlayer(overlay: HTMLElement): SignaturePlayer {
             setNib(stroke, t);
           },
           onComplete: () => {
-            // Ink pool blooms where the pen lifted, then the wet window dries.
+            // The wet window dries once the pen moves on.
             gsap.to(stroke.wet, { opacity: 0, duration: 1.6, ease: 'power1.out' });
-            if (stroke.pool) {
-              gsap.fromTo(
-                stroke.pool,
-                { opacity: 0.55, scale: 0.4 },
-                { opacity: 0, scale: 1.5, duration: 1.4, ease: 'power2.out' },
-              );
-            }
           },
         },
         cursor,
@@ -212,7 +226,8 @@ export function createSignaturePlayer(overlay: HTMLElement): SignaturePlayer {
     state = 'writing';
     overlay.dataset.state = 'writing';
     lockPage(true);
-    cameraPos.scale = window.innerWidth < 720 ? 1.7 : 2.3;
+    startScale = window.innerWidth < 720 ? 1.7 : 2.3;
+    cameraPos.scale = startScale;
     // Seed focus at the first stroke's starting point.
     const first = strokes[0]!.guide.getPointAtLength(0);
     const frac = svgPointToOverlay(first.x, first.y);
@@ -246,6 +261,7 @@ export function createSignaturePlayer(overlay: HTMLElement): SignaturePlayer {
       ease: 'expo.inOut',
       onUpdate: () => applyCamera(),
       onComplete: () => {
+        if (state !== 'settling') return;
         cameraTicker?.();
         cameraTicker = null;
         camera.style.transform = 'none';
@@ -264,11 +280,13 @@ export function createSignaturePlayer(overlay: HTMLElement): SignaturePlayer {
   function skip() {
     if (state === 'skipped') return;
     tl?.kill();
+    killLooseTweens();
     cameraTicker?.();
     cameraTicker = null;
     for (const s of strokes) {
       s.mask.setAttribute('stroke-dashoffset', '0');
       s.wet.setAttribute('opacity', '0');
+      s.pool?.setAttribute('opacity', '0');
     }
     gsap.set(nib, { opacity: 0 });
     camera.style.transform = 'none';
@@ -281,11 +299,13 @@ export function createSignaturePlayer(overlay: HTMLElement): SignaturePlayer {
     state = 'skipped';
     overlay.dataset.state = 'leaving';
     tl?.kill();
+    killLooseTweens();
     cameraTicker?.();
     cameraTicker = null;
 
     const finish = () => {
       overlay.remove();
+      window.removeEventListener('resize', measureBase);
       lockPage(false);
       dismissedCb?.();
     };
@@ -306,8 +326,9 @@ export function createSignaturePlayer(overlay: HTMLElement): SignaturePlayer {
     }
 
     // Shared-element handoff: fly the overlay signature onto the hero
-    // masthead while the curtain lifts, so the name never jumps.
-    lockPage(false);
+    // masthead while the curtain lifts, so the name never jumps. The page
+    // stays locked until finish() so scroll momentum from the dismissing
+    // gesture cannot move the hero out from under the flight.
     measureBase();
     const hero = heroSig.getBoundingClientRect();
     const scale = hero.width / baseRect.width;
@@ -315,7 +336,7 @@ export function createSignaturePlayer(overlay: HTMLElement): SignaturePlayer {
     // rect delta maps the overlay signature exactly onto the hero masthead.
     const dx = hero.left - baseRect.left;
     const dy = hero.top - baseRect.top;
-    const fade = overlay.querySelectorAll('[data-sig-subtitle], [data-sig-prompt], [data-sig-skip]');
+    const fade = overlay.querySelectorAll('[data-sig-subtitle], [data-sig-enter], [data-sig-skip]');
     gsap.to(fade, { opacity: 0, duration: 0.25, ease: 'power1.out' });
     gsap.to(bg, { opacity: 0, duration: 0.6, ease: 'power2.inOut' });
     gsap.to(camera, {
@@ -333,6 +354,7 @@ export function createSignaturePlayer(overlay: HTMLElement): SignaturePlayer {
 
   function destroy() {
     tl?.kill();
+    killLooseTweens();
     cameraTicker?.();
     cameraTicker = null;
     window.removeEventListener('resize', measureBase);

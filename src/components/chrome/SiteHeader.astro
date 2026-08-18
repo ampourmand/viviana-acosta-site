@@ -1,6 +1,7 @@
 ---
 import { site } from '@data/site';
-const path = Astro.url.pathname;
+// Build output uses trailing-slash pathnames; normalize before comparing.
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isCurrent = (href: string) =>
   href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
 const onWriting = path.startsWith('/writing');
