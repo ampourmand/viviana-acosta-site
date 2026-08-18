@@ -7,6 +7,7 @@ import EditorialImage from '@components/shared/EditorialImage.astro';
 import WorkRow from '@components/writing/WorkRow.astro';
 import PostCard from '@components/blog/PostCard.astro';
 import SignatureIntro from '@components/intro/SignatureIntro.astro';
+import SignatureSvg from '@components/intro/SignatureSvg.astro';
 import { site } from '@data/site';
 import { bio } from '@data/about';
 
@@ -47,9 +48,13 @@ const latest = posts[0];
   <section class="hero container">
     <div class="hero-text">
       <p class="eyebrow">{site.role}</p>
-      <h1 class="hero-name" data-signature-home>Viviana Acosta</h1>
+      <h1 class="hero-name" data-signature-home>
+        <span class="visually-hidden">Viviana Acosta</span>
+        <SignatureSvg variant="static" idPrefix="hero" class="hero-signature" />
+      </h1>
       <p class="tagline t-1">{site.taglineA}</p>
       <p class="tagline-b eyebrow">{site.taglineB}</p>
+      <button class="replay ui" type="button" data-sig-replay>Replay the signature</button>
     </div>
     <div class="hero-orb" aria-hidden="true">
       <Orb preset="heroAmbient" />
@@ -137,16 +142,24 @@ const latest = posts[0];
   }
 
   .hero-name {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-weight: 380;
-    font-variation-settings: 'SOFT' 0, 'WONK' 1;
-    font-size: clamp(3.4rem, 9vw, 6.4rem);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-    color: var(--sig-ink);
-    margin-block: var(--space-4);
+    margin-block: var(--space-5);
+    max-width: 640px;
     view-transition-name: wordmark;
+  }
+
+  .replay {
+    margin-block-start: var(--space-5);
+    color: var(--text-3);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid transparent;
+    transition: color var(--dur-quick) var(--ease-out);
+  }
+
+  .replay:hover {
+    color: var(--gold);
   }
 
   .tagline {
@@ -216,6 +229,9 @@ const latest = posts[0];
       grid-template-columns: 1fr;
       min-height: auto;
     }
+    .hero-name {
+      max-width: 100%;
+    }
     .hero-orb {
       display: none;
     }
@@ -227,3 +243,21 @@ const latest = posts[0];
     }
   }
 </style>
+
+<script>
+  import { registerModule } from '@lib/transitions/vt';
+  import { clearIntroSeen } from '@lib/intro/intro-gate';
+
+  registerModule({
+    init() {
+      const btn = document.querySelector<HTMLButtonElement>('[data-sig-replay]');
+      if (!btn) return;
+      const onClick = () => {
+        clearIntroSeen();
+        window.location.reload();
+      };
+      btn.addEventListener('click', onClick);
+      return () => btn.removeEventListener('click', onClick);
+    },
+  });
+</script>

@@ -1,0 +1,143 @@
+---
+/**
+ * The signature artwork, inlined. Two flavors:
+ * - animated: mask strokes at dashoffset=length (unwritten), wet trail layer,
+ *   pooling dots, and the nib group; driven by signature-player.ts.
+ * - static: the finished fill only.
+ */
+import outlinesRaw from '../../assets/signature/signature-outlines.svg?raw';
+import meta from '../../assets/signature/signature-meta.json';
+
+interface Props {
+  variant: 'animated' | 'static';
+  idPrefix?: string;
+  class?: string;
+}
+const { variant, idPrefix = 'sig', class: className } = Astro.props;
+
+const glyphsInner = outlinesRaw.match(/<g id="glyphs">([\s\S]*?)<\/g>/)?.[1] ?? '';
+const { viewBox } = meta;
+const [vbX, vbY, vbW, vbH] = viewBox.split(' ').map(Number);
+---
+
+<svg
+  class:list={['signature-svg', className]}
+  viewBox={viewBox}
+  role="img"
+  aria-label="Viviana Acosta, signature"
+  data-signature={variant}
+>
+  {
+    variant === 'animated' ? (
+      <Fragment>
+        <defs>
+          <mask id={`${idPrefix}-ink`}>
+            <rect x={vbX} y={vbY} width={vbW} height={vbH} fill="black" />
+            {meta.strokes.map((s) => (
+              <path
+                data-sig-mask={s.id}
+                d={s.d}
+                fill="none"
+                stroke="white"
+                stroke-width={s.width}
+                stroke-linecap="round"
+                stroke-dasharray={s.length}
+                stroke-dashoffset={s.length}
+              />
+            ))}
+          </mask>
+          <mask id={`${idPrefix}-wet`}>
+            <rect x={vbX} y={vbY} width={vbW} height={vbH} fill="black" />
+            {meta.strokes.map((s) => (
+              <path
+                data-sig-wet={s.id}
+                d={s.d}
+                fill="none"
+                stroke="white"
+                stroke-width={s.width}
+                stroke-linecap="butt"
+                stroke-dasharray={`0 ${s.length + 200}`}
+                stroke-dashoffset="0"
+              />
+            ))}
+          </mask>
+        </defs>
+        <g class="sig-fill" mask={`url(#${idPrefix}-ink)`} set:html={glyphsInner} />
+        <g class="sig-wet" mask={`url(#${idPrefix}-wet)`} set:html={glyphsInner} />
+        <g class="sig-pools" data-sig-pools>
+          {meta.strokes.map((s) => {
+            const start = s.d.match(/M\s*([-\d.]+)[\s,]+([-\d.]+)/);
+            return start ? (
+              <circle
+                data-sig-pool={s.id}
+                cx={start[1]}
+                cy={start[2]}
+                r="2.2"
+                transform-origin={`${start[1]} ${start[2]}`}
+              />
+            ) : null;
+          })}
+        </g>
+        <g class="sig-nib" data-sig-nib aria-hidden="true">
+          <g class="sig-nib-art">
+            <path
+              class="nib-body"
+              d="M 0 0 C -5 -14, -7 -26, -4.5 -46 L 0 -54 L 4.5 -46 C 7 -26, 5 -14, 0 0 Z"
+            />
+            <line class="nib-slit" x1="0" y1="-8" x2="0" y2="-34" />
+            <circle class="nib-breather" cx="0" cy="-34" r="2.4" />
+          </g>
+        </g>
+      </Fragment>
+    ) : (
+      <g class="sig-fill" set:html={glyphsInner} />
+    )
+  }
+</svg>
+
+<style>
+  .signature-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .signature-svg :global(.sig-fill path) {
+    fill: var(--sig-ink);
+  }
+
+  .signature-svg :global(.sig-wet path) {
+    fill: #fff6e2;
+  }
+
+  .sig-wet {
+    opacity: 0.5;
+  }
+
+  .signature-svg :global([data-sig-pool]) {
+    fill: var(--sig-ink);
+    opacity: 0;
+  }
+
+  .sig-nib {
+    opacity: 0;
+  }
+
+  .nib-body {
+    fill: var(--gold);
+    stroke: var(--copper);
+    stroke-width: 1;
+  }
+
+  .nib-slit {
+    stroke: var(--copper);
+    stroke-width: 1.1;
+  }
+
+  .nib-breather {
+    fill: var(--ink-950);
+    stroke: var(--copper);
+    stroke-width: 1;
+  }
+</style>

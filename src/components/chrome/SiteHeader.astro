@@ -8,7 +8,11 @@ const onWriting = path.startsWith('/writing');
 
 <header class="site-header" data-header>
   <div class="header-inner container">
-    <a class="wordmark" href="/" aria-label="Viviana Acosta, home">Viviana Acosta</a>
+    <a
+      class:list={['wordmark', { 'vt-wordmark': path !== '/' }]}
+      href="/"
+      aria-label="Viviana Acosta, home">Viviana Acosta</a
+    >
 
     <nav class="site-nav ui" aria-label="Primary">
       {
@@ -93,6 +97,11 @@ const onWriting = path.startsWith('/writing');
     letter-spacing: -0.01em;
     text-decoration: none;
     color: var(--text-1);
+  }
+
+  /* Only one element per page may carry the shared transition name; the
+     home hero masthead owns it on the home page. */
+  .vt-wordmark {
     view-transition-name: wordmark;
   }
 
