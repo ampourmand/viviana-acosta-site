@@ -1,0 +1,239 @@
+---
+import { site } from '@data/site';
+const path = Astro.url.pathname;
+const isCurrent = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
+const onWriting = path.startsWith('/writing');
+---
+
+<header class="site-header" data-header>
+  <div class="header-inner container">
+    <a class="wordmark" href="/" aria-label="Viviana Acosta, home">Viviana Acosta</a>
+
+    <nav class="site-nav ui" aria-label="Primary">
+      {
+        site.nav.map((item) => (
+          <a
+            class="nav-link"
+            href={item.href}
+            aria-current={isCurrent(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <button
+      class="menu-button ui"
+      type="button"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+      data-menu-button
+    >
+      <span class="menu-label" data-menu-label>Menu</span>
+    </button>
+  </div>
+
+  <div class="edge-fade" aria-hidden="true"></div>
+
+  <div class="mobile-nav" id="mobile-nav" data-mobile-nav hidden>
+    <nav class="ui" aria-label="Primary, mobile">
+      {
+        site.nav.map((item) => (
+          <a
+            class="mobile-link t-2"
+            href={item.href}
+            aria-current={isCurrent(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+{
+  onWriting && (
+    <nav class="writing-subnav ui container" aria-label="Writing sections">
+      {site.writingNav.map((item) => (
+        <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  )
+}
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background: var(--header-bg);
+    -webkit-backdrop-filter: blur(var(--header-blur)) saturate(140%);
+    backdrop-filter: blur(var(--header-blur)) saturate(140%);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    height: var(--header-h);
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 420;
+    font-variation-settings: 'SOFT' 0, 'WONK' 1;
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    color: var(--text-1);
+    view-transition-name: wordmark;
+  }
+
+  .site-nav {
+    display: flex;
+    gap: var(--space-5);
+    font-size: 0.9rem;
+  }
+
+  .nav-link {
+    position: relative;
+    text-decoration: none;
+    color: var(--text-2);
+    padding-block: 0.4rem;
+  }
+
+  .nav-link:hover {
+    color: var(--text-1);
+  }
+
+  .nav-link[aria-current='page'] {
+    color: var(--gold-bright);
+  }
+
+  .nav-link[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  /* Scroll edge effect: a soft fade where content meets the chrome,
+     instead of a hard 1px divider. */
+  .edge-fade {
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    height: 14px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgb(18 17 16 / 0.55), transparent);
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+
+  :global([data-header].scrolled) .edge-fade {
+    opacity: 1;
+  }
+
+  .menu-button {
+    display: none;
+    color: var(--text-2);
+    font-size: 0.9rem;
+    padding: 0.4rem 0.2rem;
+  }
+
+  .mobile-nav {
+    background: var(--ink-900);
+    border-top: 1px solid var(--line);
+  }
+
+  .mobile-nav nav {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-5) var(--gutter) var(--space-6);
+    gap: var(--space-4);
+  }
+
+  .mobile-link {
+    text-decoration: none;
+    color: var(--text-1);
+  }
+
+  .mobile-link[aria-current='page'] {
+    color: var(--gold-bright);
+  }
+
+  .writing-subnav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-5);
+    padding-block: var(--space-4);
+    font-size: 0.85rem;
+  }
+
+  .writing-subnav a {
+    text-decoration: none;
+    color: var(--text-3);
+  }
+
+  .writing-subnav a:hover {
+    color: var(--text-1);
+  }
+
+  .writing-subnav a[aria-current='page'] {
+    color: var(--gold-bright);
+  }
+
+  @media (max-width: 720px) {
+    .site-nav {
+      display: none;
+    }
+    .menu-button {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  import { registerModule } from '@lib/transitions/vt';
+
+  registerModule({
+    init() {
+      const header = document.querySelector<HTMLElement>('[data-header]');
+      const button = document.querySelector<HTMLButtonElement>('[data-menu-button]');
+      const panel = document.querySelector<HTMLElement>('[data-mobile-nav]');
+      if (!header) return;
+
+      const onScroll = () => {
+        header.classList.toggle('scrolled', window.scrollY > 8);
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      let toggle: (() => void) | undefined;
+      if (button && panel) {
+        toggle = () => {
+          const open = button.getAttribute('aria-expanded') === 'true';
+          button.setAttribute('aria-expanded', String(!open));
+          button.querySelector('[data-menu-label]')!.textContent = open ? 'Menu' : 'Close';
+          panel.hidden = open;
+        };
+        button.addEventListener('click', toggle);
+      }
+
+      return () => {
+        window.removeEventListener('scroll', onScroll);
+        if (button && toggle) button.removeEventListener('click', toggle);
+      };
+    },
+  });
+</script>

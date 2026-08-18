@@ -1,0 +1,402 @@
+{
+  "photo-smokies-1.jpg": {
+    "width": 2560,
+    "height": 1289,
+    "profile": "editorial"
+  },
+  "photo-smokies-2.jpg": {
+    "width": 2560,
+    "height": 1129,
+    "profile": "editorial"
+  },
+  "photo-husky-court.jpg": {
+    "width": 1204,
+    "height": 1599,
+    "profile": "editorial"
+  },
+  "photo-stationery-fest-daughter.jpg": {
+    "width": 1920,
+    "height": 2560,
+    "profile": "editorial"
+  },
+  "photo-husky-hallway.jpg": {
+    "width": 1204,
+    "height": 1600,
+    "profile": "editorial"
+  },
+  "photo-flag-selfie.jpg": {
+    "width": 1920,
+    "height": 2560,
+    "profile": "editorial"
+  },
+  "photo-husky-treadmill.jpg": {
+    "width": 2560,
+    "height": 1920,
+    "profile": "editorial"
+  },
+  "photo-husky-howl.jpg": {
+    "width": 2560,
+    "height": 1920,
+    "profile": "editorial"
+  },
+  "photo-desert-hike-1.jpg": {
+    "width": 1920,
+    "height": 2560,
+    "profile": "editorial"
+  },
+  "photo-desert-hike-2.jpg": {
+    "width": 2560,
+    "height": 1920,
+    "profile": "editorial"
+  },
+  "photo-desert-cactus.jpg": {
+    "width": 1920,
+    "height": 2560,
+    "profile": "editorial"
+  },
+  "photo-leuchtturm-pens.jpg": {
+    "width": 1920,
+    "height": 2560,
+    "profile": "editorial"
+  },
+  "photo-stationery-liberty.jpg": {
+    "width": 1920,
+    "height": 2560,
+    "profile": "editorial"
+  },
+  "blog-2023-planning-cover.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-2025-a-new-plan-cover.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-2025-img01-hobo-weeks.jpg": {
+    "width": 1500,
+    "height": 2000,
+    "profile": "natural"
+  },
+  "blog-2025-img02-venn-myselves.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-2025-img03-topclosed.jpg": {
+    "width": 1500,
+    "height": 2000,
+    "profile": "natural"
+  },
+  "blog-2025-img04-topclosed-bottom.jpg": {
+    "width": 2000,
+    "height": 1927,
+    "profile": "natural"
+  },
+  "blog-2025-img05-insidecover.jpg": {
+    "width": 1953,
+    "height": 1465,
+    "profile": "natural"
+  },
+  "blog-2025-img06-firstpage.jpg": {
+    "width": 2000,
+    "height": 1500,
+    "profile": "natural"
+  },
+  "blog-2025-img07-braindump-blank.jpg": {
+    "width": 2000,
+    "height": 1500,
+    "profile": "natural"
+  },
+  "blog-2025-img08-braindump-filled.jpg": {
+    "width": 2000,
+    "height": 1500,
+    "profile": "natural"
+  },
+  "blog-2025-img09-focus-pencil.jpg": {
+    "width": 2000,
+    "height": 1500,
+    "profile": "natural"
+  },
+  "blog-2025-img10-focus-penmarker.jpg": {
+    "width": 2000,
+    "height": 1500,
+    "profile": "natural"
+  },
+  "blog-2025-img11-q1.jpg": {
+    "width": 2000,
+    "height": 1500,
+    "profile": "natural"
+  },
+  "blog-2025-img12-firstweek.jpg": {
+    "width": 2000,
+    "height": 1500,
+    "profile": "natural"
+  },
+  "blog-2025-img13-backcover.jpg": {
+    "width": 2000,
+    "height": 1500,
+    "profile": "natural"
+  },
+  "blog-goals-vs-realities-cover.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-goals-vs-realities-img01.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-goals-vs-realities-img02.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-goals-vs-realities-img03.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-goals-vs-realities-img04.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-goals-vs-realities-img05.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-goals-vs-realities-img06.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-goals-vs-realities-img07.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-goals-vs-realities-img08.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-goals-vs-realities-img09.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-life-choices-cover.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-life-choices-img01.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-nonano-2023-cover.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-nowrimo-2023-img01.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-nowrimo-2023-img02.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-nowrimo-2023-img03.jpg": {
+    "width": 1336,
+    "height": 1334,
+    "profile": "natural"
+  },
+  "blog-nowrimo-2023-img04.jpg": {
+    "width": 1156,
+    "height": 522,
+    "profile": "natural"
+  },
+  "blog-nowrimo-2023-img05.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-nowrimo-2023-img06.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-nowrimo-2023-img07.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-nowrimo-2023-img08.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-nowrimo-2023-img09.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-nowrimo-2023-img10.jpg": {
+    "width": 1354,
+    "height": 830,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img02.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img03.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img04.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img05.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img06.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img07.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img08.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img10.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img11.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img12.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img13.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img14.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img15.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img16.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img17.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img18.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img19.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img20.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-planning-for-2023-img21.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-scifimigrantes-cover.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-scifimigrantes-img01.jpg": {
+    "width": 1080,
+    "height": 1080,
+    "profile": "natural"
+  },
+  "blog-what-domain-name-should-i-use-img01.jpg": {
+    "width": 2000,
+    "height": 2000,
+    "profile": "natural"
+  },
+  "cover-ascension.jpg": {
+    "width": 1920,
+    "height": 500,
+    "profile": "natural"
+  },
+  "cover-besitos-de-coco.jpg": {
+    "width": 1824,
+    "height": 2000,
+    "profile": "natural"
+  },
+  "cover-i-cant-see.jpg": {
+    "width": 2000,
+    "height": 2000,
+    "profile": "natural"
+  },
+  "cover-panela-plantation.jpg": {
+    "width": 1824,
+    "height": 2000,
+    "profile": "natural"
+  },
+  "logo-rocket-reference.jpg": {
+    "width": 340,
+    "height": 340,
+    "profile": "natural"
+  },
+  "portrait-about.jpg": {
+    "width": 2048,
+    "height": 2245,
+    "profile": "editorial"
+  },
+  "portrait-home-collage.jpg": {
+    "width": 2000,
+    "height": 2000,
+    "profile": "natural"
+  }
+}

@@ -1,0 +1,38 @@
+---
+import Orb from '@components/orbs/Orb.astro';
+
+interface Props {
+  eyebrow: string;
+  title?: string;
+  level?: 'h2' | 'h3';
+  orb?: boolean;
+  id?: string;
+}
+const { eyebrow, title, level = 'h2', orb = true, id } = Astro.props;
+const Tag = level;
+---
+
+<div class="section-heading" {id}>
+  <p class="eyebrow-row">
+    {orb && <Orb preset="sectionMarker" class="marker" />}
+    <span class="eyebrow">{eyebrow}</span>
+  </p>
+  {title && <Tag class="t-4">{title}</Tag>}
+</div>
+
+<style>
+  .section-heading {
+    margin-block-end: var(--space-6);
+  }
+
+  .eyebrow-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-block-end: var(--space-3);
+  }
+
+  .marker {
+    flex: none;
+  }
+</style>

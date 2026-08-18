@@ -1,0 +1,90 @@
+---
+import { getCollection, render } from 'astro:content';
+import Page from '../../layouts/Page.astro';
+import SectionHeading from '@components/shared/SectionHeading.astro';
+import EditorialImage from '@components/shared/EditorialImage.astro';
+import WorkMeta from '@components/writing/WorkMeta.astro';
+
+import coverICantSee from '@assets/photos/cover-i-cant-see.jpg';
+const covers: Record<string, ImageMetadata> = { 'i-cant-see': coverICantSee };
+import type { ImageMetadata } from 'astro';
+
+const books = (
+  await getCollection('works', (w) => w.data.category === 'picture-book' && w.body?.trim())
+).sort((a, b) => a.data.order - b.data.order);
+const rendered = await Promise.all(books.map(async (work) => ({ work, r: await render(work) })));
+---
+
+<Page
+  title="Picture Books"
+  description="Picture books by Viviana Acosta, including I Can't See! How the Hubble Space Telescope Got Glasses."
+>
+  <section class="section container">
+    <SectionHeading eyebrow="Writing" title="Picture Books" />
+
+    {
+      rendered.map(({ work, r }) => (
+        <article class="book">
+          <div class="book-text">
+            <h2 class="t-3">{work.data.title}</h2>
+            {work.data.subtitle && <p class="subtitle t-1">{work.data.subtitle}</p>}
+            <div class="desc prose-width">
+              <r.Content />
+            </div>
+            <WorkMeta work={work.data} />
+          </div>
+          {covers[work.id] && (
+            <div class="book-cover">
+              <EditorialImage
+                src={covers[work.id]!}
+                alt={`Cover concept for ${work.data.title}`}
+                widths={[400, 700, 1000]}
+                sizes="(max-width: 860px) 90vw, 460px"
+              />
+            </div>
+          )}
+        </article>
+      ))
+    }
+  </section>
+</Page>
+
+<style>
+  .book {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 460px);
+    gap: var(--space-8);
+    align-items: start;
+    padding-block: var(--space-6);
+  }
+
+  .book + .book {
+    border-top: 1px solid var(--line);
+  }
+
+  .subtitle {
+    font-style: italic;
+    color: var(--text-2);
+    margin-block-start: var(--space-2);
+  }
+
+  .desc {
+    margin-block: var(--space-5);
+    color: var(--text-2);
+  }
+
+  .book-cover {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  @media (max-width: 860px) {
+    .book {
+      grid-template-columns: 1fr;
+    }
+    .book-cover {
+      order: -1;
+      max-width: 26rem;
+    }
+  }
+</style>

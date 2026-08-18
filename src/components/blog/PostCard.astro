@@ -1,0 +1,75 @@
+---
+import type { ImageMetadata } from 'astro';
+import EditorialImage from '@components/shared/EditorialImage.astro';
+import { formatDate } from '@lib/format';
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  href: string;
+  cover?: ImageMetadata | null;
+}
+const { title, description, date, href, cover } = Astro.props;
+---
+
+<article class="post-card">
+  {
+    cover && (
+      <a class="cover" href={href} tabindex="-1" aria-hidden="true">
+        <EditorialImage src={cover} alt="" widths={[400, 700]} sizes="(max-width: 700px) 90vw, 320px" />
+      </a>
+    )
+  }
+  <div class="body">
+    <p class="eyebrow">{formatDate(date)}</p>
+    <h2 class="t-2">
+      <a href={href}>{title}</a>
+    </h2>
+    <p class="desc">{description}</p>
+  </div>
+</article>
+
+<style>
+  .post-card {
+    display: grid;
+    grid-template-columns: minmax(0, 320px) 1fr;
+    gap: var(--space-6);
+    align-items: start;
+    padding-block: var(--space-6);
+  }
+
+  .post-card + .post-card {
+    border-top: 1px solid var(--line);
+  }
+
+  .cover {
+    display: block;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  h2 a {
+    text-decoration: none;
+    color: var(--text-1);
+  }
+
+  h2 a:hover {
+    color: var(--gold-bright);
+  }
+
+  .desc {
+    margin-block-start: var(--space-3);
+    color: var(--text-2);
+    max-width: var(--measure-prose);
+  }
+
+  @media (max-width: 700px) {
+    .post-card {
+      grid-template-columns: 1fr;
+    }
+    .cover {
+      max-width: 20rem;
+    }
+  }
+</style>

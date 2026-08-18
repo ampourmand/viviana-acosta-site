@@ -1,0 +1,10 @@
+{
+  "name": "American Civil Liberties Union",
+  "url": "https://www.aclu.org",
+  "blurb": "Defending the rights and liberties guaranteed to every person in this country.",
+  "order": 2,
+  "handles": [
+    { "platform": "instagram", "url": "https://www.instagram.com/aclu_nationwide/", "label": "@aclu_nationwide" },
+    { "platform": "x", "url": "https://twitter.com/aclu", "label": "@aclu" }
+  ]
+}

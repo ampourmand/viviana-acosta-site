@@ -1,0 +1,10 @@
+{
+  "name": "League of Women Voters",
+  "url": "https://www.lwv.org/",
+  "blurb": "Empowering voters and defending democracy.",
+  "order": 1,
+  "handles": [
+    { "platform": "instagram", "url": "https://www.instagram.com/leagueofwomenvoters/", "label": "@leagueofwomenvoters" },
+    { "platform": "x", "url": "https://twitter.com/LWV", "label": "@lwv" }
+  ]
+}

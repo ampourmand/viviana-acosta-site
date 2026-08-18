@@ -1,0 +1,61 @@
+---
+import Page from '../layouts/Page.astro';
+import SectionHeading from '@components/shared/SectionHeading.astro';
+import ContactForm from '@components/contact/ContactForm.astro';
+import SocialLinks from '@components/shared/SocialLinks.astro';
+---
+
+<Page title="Contact" description="Get in touch with Viviana Acosta.">
+  <section class="section container contact-grid">
+    <div>
+      <SectionHeading eyebrow="Contact" title="Want to Connect?" />
+      <p class="lede prose-width">Leave your info below. Thanks for your interest!</p>
+      <ContactForm />
+    </div>
+    <aside class="aside">
+      <p class="eyebrow">Elsewhere</p>
+      <SocialLinks class="contact-socials" />
+      <p class="aside-note">
+        For rights or editorial inquiries, email works too:
+        <a href="mailto:escritoraviviana@gmail.com">escritoraviviana@gmail.com</a>
+      </p>
+    </aside>
+  </section>
+</Page>
+
+<style>
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 20rem);
+    gap: var(--space-9);
+    align-items: start;
+  }
+
+  .lede {
+    color: var(--text-2);
+    margin-block-end: var(--space-6);
+  }
+
+  .aside {
+    padding-block-start: var(--space-7);
+  }
+
+  .contact-socials {
+    margin-block: var(--space-4);
+  }
+
+  .aside-note {
+    color: var(--text-3);
+    font-size: 0.9rem;
+  }
+
+  .aside-note a {
+    color: var(--gold);
+  }
+
+  @media (max-width: 860px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

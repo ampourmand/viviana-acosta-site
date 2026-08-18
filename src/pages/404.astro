@@ -1,0 +1,39 @@
+---
+import Page from '../layouts/Page.astro';
+import Orb from '@components/orbs/Orb.astro';
+---
+
+<Page title="Page not found" description="This page drifted off course.">
+  <section class="section container lost">
+    <Orb preset="sectionMarker" size={30} />
+    <h1 class="t-4">This page drifted off course.</h1>
+    <p class="note">The story you were looking for is not here, or not yet written.</p>
+    <a class="back ui" href="/">Return home</a>
+  </section>
+</Page>
+
+<style>
+  .lost {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    min-height: 46dvh;
+    justify-content: center;
+  }
+
+  .note {
+    color: var(--text-2);
+  }
+
+  .back {
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-strong);
+    padding-block-end: 2px;
+  }
+
+  .back:hover {
+    color: var(--gold-bright);
+  }
+</style>

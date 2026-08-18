@@ -1,0 +1,82 @@
+---
+/**
+ * Newsletter capture via Netlify Forms (submissions land in the Netlify
+ * dashboard; upgradeable to a real newsletter service later). Works only
+ * on the deployed site; locally the POST is a no-op.
+ */
+---
+
+<form
+  class="newsletter ui"
+  name="newsletter"
+  method="POST"
+  action="/thanks"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+>
+  <input type="hidden" name="form-name" value="newsletter" />
+  <p class="hp" aria-hidden="true">
+    <label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+  </p>
+  <div class="row">
+    <label class="visually-hidden" for="newsletter-email">Email Address</label>
+    <input
+      id="newsletter-email"
+      type="email"
+      name="email"
+      placeholder="Email Address"
+      autocomplete="email"
+      required
+    />
+    <button class="pressable" type="submit">Sign Up</button>
+  </div>
+</form>
+
+<style>
+  .hp {
+    position: absolute;
+    left: -9999px;
+  }
+
+  .row {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  input[type='email'] {
+    flex: 1;
+    min-width: 0;
+    background: var(--ink-800);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.65rem 0.9rem;
+    color: var(--text-1);
+    transition: border-color var(--dur-quick) var(--ease-out);
+  }
+
+  input[type='email']::placeholder {
+    color: var(--text-3);
+  }
+
+  input[type='email']:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+  button {
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    color: var(--gold);
+    padding: 0.65rem 1.2rem;
+    font-size: 0.9rem;
+    transition:
+      color var(--dur-quick) var(--ease-out),
+      border-color var(--dur-quick) var(--ease-out);
+  }
+
+  button:hover {
+    color: var(--gold-bright);
+    border-color: var(--gold);
+  }
+</style>

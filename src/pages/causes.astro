@@ -1,0 +1,94 @@
+---
+import { getCollection } from 'astro:content';
+import Page from '../layouts/Page.astro';
+import SectionHeading from '@components/shared/SectionHeading.astro';
+
+const causes = (await getCollection('causes')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Page
+  title="Causes"
+  description="Join Viviana Acosta in supporting the League of Women Voters, the ACLU, and Project Street Vet."
+>
+  <section class="section container">
+    <SectionHeading
+      eyebrow="Show your support"
+      title="Join me in supporting these worthy organizations"
+    />
+
+    <ul class="cause-list" role="list">
+      {
+        causes.map((cause) => (
+          <li class="cause">
+            <h2 class="t-3">
+              <a href={cause.data.url} rel="noopener" target="_blank">
+                {cause.data.name}
+              </a>
+            </h2>
+            <p class="blurb">{cause.data.blurb}</p>
+            <ul class="handles ui" role="list">
+              {cause.data.handles.map((h) => (
+                <li>
+                  <a href={h.url} rel="noopener" target="_blank">
+                    {h.label}
+                    <span class="visually-hidden"> on {h.platform}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Page>
+
+<style>
+  .cause-list {
+    padding: 0;
+    list-style: none;
+  }
+
+  .cause {
+    padding-block: var(--space-7);
+  }
+
+  .cause + .cause {
+    border-top: 1px solid var(--line);
+  }
+
+  .cause h2 a {
+    text-decoration: none;
+    color: var(--text-1);
+  }
+
+  .cause h2 a:hover {
+    color: var(--gold-bright);
+  }
+
+  .blurb {
+    color: var(--text-2);
+    max-width: var(--measure-prose);
+    margin-block: var(--space-3) var(--space-4);
+  }
+
+  .handles {
+    display: flex;
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+    font-size: 0.9rem;
+  }
+
+  .handles a {
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-strong);
+    padding-block-end: 2px;
+  }
+
+  .handles a:hover {
+    color: var(--gold-bright);
+    border-color: var(--gold-bright);
+  }
+</style>

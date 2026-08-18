@@ -1,0 +1,39 @@
+---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  widths?: number[];
+  sizes?: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+}
+const {
+  src,
+  alt,
+  widths = [480, 800, 1200, 1600],
+  sizes = '(max-width: 800px) 100vw, 800px',
+  class: className,
+  loading = 'lazy',
+} = Astro.props;
+---
+
+<Picture
+  {src}
+  {alt}
+  {widths}
+  {sizes}
+  {loading}
+  formats={['avif', 'webp']}
+  fallbackFormat="jpeg"
+  class:list={['editorial-image', className]}
+/>
+
+<style>
+  .editorial-image {
+    border-radius: 4px;
+    height: auto;
+  }
+</style>

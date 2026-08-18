@@ -1,0 +1,196 @@
+---
+import Page from '../layouts/Page.astro';
+import SectionHeading from '@components/shared/SectionHeading.astro';
+import EditorialImage from '@components/shared/EditorialImage.astro';
+import { bio, missionQuote, experience, education, memberships } from '@data/about';
+
+import portrait from '@assets/photos/portrait-about.jpg';
+import photoPens from '@assets/photos/photo-leuchtturm-pens.jpg';
+import photoDesert from '@assets/photos/photo-desert-hike-1.jpg';
+import photoHusky from '@assets/photos/photo-husky-hallway.jpg';
+import photoSmokies from '@assets/photos/photo-smokies-1.jpg';
+
+const strip = [
+  { src: photoPens, alt: 'Viviana and her daughter holding giant pens at Stationery Fest in Brooklyn' },
+  { src: photoDesert, alt: 'Viviana hiking among saguaro cactus in the desert' },
+  { src: photoHusky, alt: 'Her husky sitting in a hallway' },
+  { src: photoSmokies, alt: 'Viviana in the Smoky Mountains' },
+];
+---
+
+<Page title="About" description={bio[0]}>
+  <section class="section container about-grid">
+    <div class="portrait">
+      <EditorialImage
+        src={portrait}
+        alt="Viviana Acosta"
+        widths={[400, 700, 1000]}
+        sizes="(max-width: 860px) 90vw, 420px"
+        loading="eager"
+      />
+    </div>
+
+    <div class="about-body">
+      <SectionHeading eyebrow="About" title="Bio" />
+      {bio.map((para) => <p class="bio-para prose-width">{para}</p>)}
+
+      <blockquote class="mission-quote">
+        <p class="quote-heading t-3">{missionQuote.heading}</p>
+        <p class="quote-body t-hand">{missionQuote.body}</p>
+        <footer class="quote-signoff eyebrow">{missionQuote.signoff}</footer>
+      </blockquote>
+
+      <SectionHeading eyebrow="The Engineer" title="Experience" level="h2" />
+      <ul class="fact-list prose-width">
+        {experience.map((item) => <li>{item}</li>)}
+      </ul>
+
+      <SectionHeading eyebrow="The Student" title="Education" level="h2" />
+      <ul class="fact-list education prose-width" role="list">
+        {
+          education.map((e) => (
+            <li>
+              <span class="eyebrow year">{e.year}</span>
+              <span>
+                {e.place}, {e.credential}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <SectionHeading eyebrow="The Writer" title="Memberships" level="h2" />
+      <ul class="fact-list prose-width" role="list">
+        {
+          memberships.map((m) => (
+            <li>
+              <a href={m.href} rel="noopener" target="_blank">{m.label}</a><span>, since {m.since}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <SectionHeading eyebrow="Off the Page" title="Space, stationery, dogs, and trails" />
+    <ul class="photo-strip" role="list">
+      {
+        strip.map((photo) => (
+          <li>
+            <EditorialImage
+              src={photo.src}
+              alt={photo.alt}
+              widths={[300, 500, 800]}
+              sizes="(max-width: 700px) 45vw, 300px"
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Page>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 420px) 1fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  .portrait {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-5));
+  }
+
+  .bio-para {
+    margin-block-end: var(--space-4);
+    font-size: 1.0625rem;
+  }
+
+  .mission-quote {
+    margin-block: var(--space-8);
+    padding-inline-start: var(--space-5);
+    border-inline-start: 1px solid var(--gold);
+  }
+
+  .quote-heading {
+    color: var(--gold-bright);
+    margin-block-end: var(--space-4);
+  }
+
+  .quote-body {
+    font-size: 1.25rem;
+    line-height: 1.55;
+    color: var(--text-2);
+    max-width: 44rem;
+  }
+
+  .quote-signoff {
+    margin-block-start: var(--space-4);
+  }
+
+  .fact-list {
+    padding-inline-start: 1.2em;
+    margin-block-end: var(--space-8);
+    color: var(--text-2);
+  }
+
+  .fact-list li + li {
+    margin-block-start: var(--space-3);
+  }
+
+  .fact-list a {
+    color: var(--gold);
+  }
+
+  .education {
+    list-style: none;
+    padding-inline-start: 0;
+  }
+
+  .education li {
+    display: flex;
+    gap: var(--space-4);
+    align-items: baseline;
+  }
+
+  .year {
+    flex: none;
+    width: 3.2rem;
+  }
+
+  .photo-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+
+  .photo-strip li {
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  .photo-strip :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 860px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+    .portrait {
+      position: static;
+      max-width: 22rem;
+    }
+    .photo-strip {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

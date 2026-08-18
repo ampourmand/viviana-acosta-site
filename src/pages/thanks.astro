@@ -1,0 +1,39 @@
+---
+import Page from '../layouts/Page.astro';
+import Orb from '@components/orbs/Orb.astro';
+---
+
+<Page title="Thank you" description="Message received.">
+  <section class="section container thanks">
+    <Orb preset="formPending" size={44} />
+    <h1 class="t-4">Thank you!</h1>
+    <p class="note">Your message is on its way. Viviana will be in touch.</p>
+    <a class="back ui" href="/">Back to the site</a>
+  </section>
+</Page>
+
+<style>
+  .thanks {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    min-height: 46dvh;
+    justify-content: center;
+  }
+
+  .note {
+    color: var(--text-2);
+  }
+
+  .back {
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-strong);
+    padding-block-end: 2px;
+  }
+
+  .back:hover {
+    color: var(--gold-bright);
+  }
+</style>

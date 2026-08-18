@@ -1,0 +1,163 @@
+---
+/**
+ * The main contact form (Netlify Forms). Field set mirrors her Squarespace
+ * form; the how-did-you-hear choices replace Squarespace's never-customized
+ * default placeholders with real channels (editable in this file).
+ */
+const heardOptions = [
+  'Instagram',
+  'Bluesky',
+  'SCBWI',
+  'A friend or colleague',
+  'Search',
+  'Other',
+];
+---
+
+<form
+  class="contact-form ui"
+  name="contact"
+  method="POST"
+  action="/thanks"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+>
+  <input type="hidden" name="form-name" value="contact" />
+  <p class="hp" aria-hidden="true">
+    <label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+  </p>
+
+  <div class="grid">
+    <div class="field">
+      <label for="cf-first">First Name <span class="req">required</span></label>
+      <input id="cf-first" name="first-name" type="text" autocomplete="given-name" required />
+    </div>
+    <div class="field">
+      <label for="cf-last">Last Name <span class="req">required</span></label>
+      <input id="cf-last" name="last-name" type="text" autocomplete="family-name" required />
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="cf-email">Email <span class="req">required</span></label>
+    <input id="cf-email" name="email" type="email" autocomplete="email" required />
+  </div>
+
+  <div class="field checkbox">
+    <input id="cf-news" name="newsletter-opt-in" type="checkbox" value="yes" />
+    <label for="cf-news">Sign up for news and updates</label>
+  </div>
+
+  <div class="field">
+    <label for="cf-heard">How did you hear about us?</label>
+    <select id="cf-heard" name="how-did-you-hear">
+      <option value="" selected>Select an option</option>
+      {heardOptions.map((opt) => <option value={opt}>{opt}</option>)}
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="cf-message">Message <span class="req">required</span></label>
+    <textarea id="cf-message" name="message" rows="6" required></textarea>
+  </div>
+
+  <button class="submit pressable" type="submit">Submit</button>
+</form>
+
+<style>
+  .contact-form {
+    max-width: 34rem;
+  }
+
+  .hp {
+    position: absolute;
+    left: -9999px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 540px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .field {
+    margin-block-end: var(--space-5);
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-2);
+    margin-block-end: var(--space-2);
+  }
+
+  .req {
+    color: var(--text-3);
+    font-size: 0.75rem;
+    margin-inline-start: 0.35rem;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  select,
+  textarea {
+    width: 100%;
+    background: var(--ink-800);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.65rem 0.9rem;
+    color: var(--text-1);
+    transition: border-color var(--dur-quick) var(--ease-out);
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .checkbox label {
+    margin: 0;
+  }
+
+  .checkbox input {
+    accent-color: var(--gold);
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  .submit {
+    background: none;
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    color: var(--gold);
+    padding: 0.7rem 2rem;
+    font-size: 0.95rem;
+    transition:
+      color var(--dur-quick) var(--ease-out),
+      border-color var(--dur-quick) var(--ease-out),
+      background-color var(--dur-quick) var(--ease-out);
+  }
+
+  .submit:hover {
+    color: var(--ink-950);
+    background: var(--gold);
+  }
+</style>

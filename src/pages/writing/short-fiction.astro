@@ -1,0 +1,101 @@
+---
+import { getCollection, render } from 'astro:content';
+import Page from '../../layouts/Page.astro';
+import SectionHeading from '@components/shared/SectionHeading.astro';
+import EditorialImage from '@components/shared/EditorialImage.astro';
+import WorkMeta from '@components/writing/WorkMeta.astro';
+
+import coverPanela from '@assets/photos/cover-panela-plantation.jpg';
+import coverBesitos from '@assets/photos/cover-besitos-de-coco.jpg';
+const covers: Record<string, ImageMetadata> = {
+  'panela-plantation': coverPanela,
+  'besitos-de-coco': coverBesitos,
+};
+import type { ImageMetadata } from 'astro';
+
+const pieces = (
+  await getCollection('works', (w) => w.data.category === 'short-fiction' && w.body?.trim())
+).sort((a, b) => a.data.order - b.data.order);
+const rendered = await Promise.all(pieces.map(async (work) => ({ work, r: await render(work) })));
+---
+
+<Page
+  title="Short Fiction"
+  description="Short fiction by Viviana Acosta: Panela Plantation and Besitos de Coco (Coconut Kisses)."
+>
+  <section class="section container">
+    <SectionHeading eyebrow="Writing" title="Short Fiction" />
+
+    {
+      rendered.map(({ work, r }, i) => (
+        <article class:list={['piece', { reverse: i % 2 === 1 }]}>
+          {covers[work.id] && (
+            <div class="piece-cover">
+              <EditorialImage
+                src={covers[work.id]!}
+                alt={`Art for ${work.data.title}`}
+                widths={[400, 700, 1000]}
+                sizes="(max-width: 860px) 90vw, 400px"
+              />
+            </div>
+          )}
+          <div class="piece-text">
+            <h2 class="t-3">{work.data.title}</h2>
+            {work.data.subtitle && <p class="subtitle t-1">{work.data.subtitle}</p>}
+            <div class="desc prose-width">
+              <r.Content />
+            </div>
+            <WorkMeta work={work.data} />
+          </div>
+        </article>
+      ))
+    }
+  </section>
+</Page>
+
+<style>
+  .piece {
+    display: grid;
+    grid-template-columns: minmax(0, 400px) 1fr;
+    gap: var(--space-8);
+    align-items: start;
+    padding-block: var(--space-6);
+  }
+
+  .piece + .piece {
+    border-top: 1px solid var(--line);
+  }
+
+  .piece.reverse .piece-cover {
+    order: 2;
+  }
+
+  .subtitle {
+    font-style: italic;
+    color: var(--text-2);
+    margin-block-start: var(--space-2);
+  }
+
+  .desc {
+    margin-block: var(--space-5);
+    color: var(--text-2);
+  }
+
+  .piece-cover {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  @media (max-width: 860px) {
+    .piece,
+    .piece.reverse {
+      grid-template-columns: 1fr;
+    }
+    .piece.reverse .piece-cover {
+      order: 0;
+    }
+    .piece-cover {
+      max-width: 24rem;
+    }
+  }
+</style>

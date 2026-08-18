@@ -1,0 +1,91 @@
+---
+import { getEntry, render } from 'astro:content';
+import Page from '../../layouts/Page.astro';
+import Orb from '@components/orbs/Orb.astro';
+import EditorialImage from '@components/shared/EditorialImage.astro';
+import WorkMeta from '@components/writing/WorkMeta.astro';
+
+import coverAscension from '@assets/photos/cover-ascension.jpg';
+
+const work = await getEntry('works', 'ascension');
+if (!work) throw new Error('ascension work entry missing');
+const { Content } = await render(work);
+---
+
+<Page
+  title="Ascension"
+  description="Ascension, the work-in-progress debut young adult novel by Viviana Acosta."
+>
+  <section class="ascension-hero">
+    <div class="planet" aria-hidden="true">
+      <Orb preset="planet" />
+    </div>
+    <div class="container hero-copy">
+      <p class="eyebrow">Young Adult Novel</p>
+      <h1 class="t-6">{work.data.title}</h1>
+      <p class="subtitle t-hand">{work.data.subtitle}</p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <div class="logline prose-width t-1">
+      <Content />
+    </div>
+    <WorkMeta work={work.data} />
+
+    <div class="cover-band">
+      <EditorialImage
+        src={coverAscension}
+        alt="Mock cover for Ascension"
+        widths={[700, 1200, 1900]}
+        sizes="(max-width: 900px) 100vw, 900px"
+      />
+    </div>
+  </section>
+</Page>
+
+<style>
+  .ascension-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--ink-well);
+    padding-block: var(--space-10) var(--space-9);
+  }
+
+  .planet {
+    position: absolute;
+    top: 50%;
+    right: -60px;
+    transform: translateY(-50%);
+    opacity: 0.7;
+  }
+
+  .hero-copy {
+    position: relative;
+  }
+
+  .subtitle {
+    color: var(--text-2);
+    font-size: 1.35rem;
+    margin-block-start: var(--space-3);
+  }
+
+  .logline {
+    color: var(--text-1);
+    margin-block-end: var(--space-6);
+  }
+
+  .cover-band {
+    margin-block-start: var(--space-7);
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 900px;
+  }
+
+  @media (max-width: 720px) {
+    .planet {
+      right: -140px;
+      opacity: 0.35;
+    }
+  }
+</style>

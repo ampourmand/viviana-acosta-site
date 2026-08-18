@@ -1,0 +1,117 @@
+---
+import type { ImageMetadata } from 'astro';
+import EditorialImage from '@components/shared/EditorialImage.astro';
+import { statusLabel } from '@lib/format';
+
+interface Props {
+  title: string;
+  subtitle?: string | null;
+  status?: string;
+  href: string;
+  cover?: ImageMetadata | null;
+  coverAlt?: string;
+  reverse?: boolean;
+}
+const { title, subtitle, status, href, cover, coverAlt = '', reverse = false } = Astro.props;
+const showStatus = status && status !== 'tbd';
+---
+
+<article class:list={['work-row', { reverse }]}>
+  {
+    cover && (
+      <a class="cover" href={href} tabindex="-1" aria-hidden="true">
+        <EditorialImage src={cover} alt="" widths={[400, 700, 1000]} sizes="(max-width: 760px) 90vw, 380px" />
+      </a>
+    )
+  }
+  <div class="body">
+    {showStatus && <p class="eyebrow">{statusLabel(status!)}</p>}
+    <h3 class="t-3">
+      <a class="title-link" href={href}>{title}</a>
+    </h3>
+    {subtitle && <p class="subtitle t-1">{subtitle}</p>}
+    <div class="desc prose-width">
+      <slot />
+    </div>
+    <a class="more ui" href={href}>Read more<span class="visually-hidden"> about {title}</span></a>
+  </div>
+</article>
+
+<style>
+  .work-row {
+    display: grid;
+    grid-template-columns: minmax(0, 380px) 1fr;
+    gap: var(--space-7);
+    align-items: start;
+    padding-block: var(--space-7);
+  }
+
+  .work-row + .work-row {
+    border-top: 1px solid var(--line);
+  }
+
+  .work-row.reverse {
+    grid-template-columns: 1fr minmax(0, 380px);
+  }
+
+  .work-row.reverse .cover {
+    order: 2;
+  }
+
+  .cover {
+    display: block;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .title-link {
+    text-decoration: none;
+    color: var(--text-1);
+  }
+
+  .title-link:hover {
+    color: var(--gold-bright);
+  }
+
+  .subtitle {
+    color: var(--text-2);
+    font-style: italic;
+    margin-block-start: var(--space-2);
+  }
+
+  .desc {
+    margin-block-start: var(--space-4);
+    color: var(--text-2);
+  }
+
+  .more {
+    display: inline-block;
+    margin-block-start: var(--space-4);
+    font-size: 0.9rem;
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-strong);
+    padding-block-end: 2px;
+    transition:
+      color var(--dur-quick) var(--ease-out),
+      border-color var(--dur-quick) var(--ease-out);
+  }
+
+  .more:hover {
+    color: var(--gold-bright);
+    border-color: var(--gold-bright);
+  }
+
+  @media (max-width: 760px) {
+    .work-row,
+    .work-row.reverse {
+      grid-template-columns: 1fr;
+    }
+    .work-row.reverse .cover {
+      order: 0;
+    }
+    .cover {
+      max-width: 24rem;
+    }
+  }
+</style>

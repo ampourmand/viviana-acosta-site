@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import Page from '../../layouts/Page.astro';
+import SectionHeading from '@components/shared/SectionHeading.astro';
+import PostCard from '@components/blog/PostCard.astro';
+
+const posts = (await getCollection('blog', (p) => !p.data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<Page title="Blog" description="Notes on the writing life, planning, and stationery by Viviana Acosta.">
+  <section class="section container">
+    <SectionHeading eyebrow="Blog" title="Notes on the writing life" />
+    {
+      posts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          date={post.data.date}
+          href={`/blog/${post.id}`}
+          cover={post.data.cover}
+        />
+      ))
+    }
+  </section>
+</Page>

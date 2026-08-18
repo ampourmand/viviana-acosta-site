@@ -1,0 +1,101 @@
+---
+import { site } from '@data/site';
+import NewsletterForm from '@components/contact/NewsletterForm.astro';
+import SocialLinks from '@components/shared/SocialLinks.astro';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-signup">
+      <p class="signup-prompt">{site.newsletterPrompt}</p>
+      <NewsletterForm />
+    </div>
+
+    <div class="footer-meta">
+      <nav class="ui footer-nav" aria-label="Footer">
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+      </nav>
+      <SocialLinks />
+    </div>
+  </div>
+
+  <div class="container footer-close">
+    <p class="mission t-hand">{site.missionFooter}</p>
+    <p class="colophon ui">&copy; {year} Viviana Acosta</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-block-start: var(--space-10);
+    border-top: 1px solid var(--line);
+    background: var(--ink-well);
+    padding-block: var(--space-8) var(--space-6);
+  }
+
+  .footer-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-7);
+    align-items: flex-start;
+  }
+
+  .footer-signup {
+    max-width: 26rem;
+  }
+
+  .signup-prompt {
+    font-weight: 560;
+    margin-block-end: var(--space-4);
+  }
+
+  .footer-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-4);
+  }
+
+  .footer-nav {
+    display: flex;
+    gap: var(--space-5);
+    font-size: 0.9rem;
+  }
+
+  .footer-nav a {
+    color: var(--text-2);
+    text-decoration: none;
+  }
+
+  .footer-nav a:hover {
+    color: var(--text-1);
+  }
+
+  .footer-close {
+    margin-block-start: var(--space-8);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .mission {
+    font-size: 1.25rem;
+    color: var(--text-2);
+  }
+
+  .colophon {
+    font-size: 0.8rem;
+    color: var(--text-3);
+  }
+
+  @media (max-width: 720px) {
+    .footer-meta {
+      align-items: flex-start;
+    }
+  }
+</style>

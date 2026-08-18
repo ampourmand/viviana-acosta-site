@@ -1,0 +1,229 @@
+---
+import { getCollection, render } from 'astro:content';
+import Page from '../layouts/Page.astro';
+import Orb from '@components/orbs/Orb.astro';
+import SectionHeading from '@components/shared/SectionHeading.astro';
+import EditorialImage from '@components/shared/EditorialImage.astro';
+import WorkRow from '@components/writing/WorkRow.astro';
+import PostCard from '@components/blog/PostCard.astro';
+import SignatureIntro from '@components/intro/SignatureIntro.astro';
+import { site } from '@data/site';
+import { bio } from '@data/about';
+
+import portrait from '@assets/photos/portrait-about.jpg';
+import coverAscension from '@assets/photos/cover-ascension.jpg';
+import coverICantSee from '@assets/photos/cover-i-cant-see.jpg';
+import coverPanela from '@assets/photos/cover-panela-plantation.jpg';
+
+const covers: Record<string, ImageMetadata> = {
+  ascension: coverAscension,
+  'i-cant-see': coverICantSee,
+  'panela-plantation': coverPanela,
+};
+const hrefs: Record<string, string> = {
+  ascension: '/writing/ascension',
+  'i-cant-see': '/writing/picture-books',
+  'panela-plantation': '/writing/short-fiction',
+};
+
+import type { ImageMetadata } from 'astro';
+
+const works = (await getCollection('works', (w) => w.data.featured)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const featured = await Promise.all(
+  works.map(async (work) => ({ work, rendered: await render(work) })),
+);
+
+const posts = (await getCollection('blog', (p) => !p.data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const latest = posts[0];
+---
+
+<Page>
+  <SignatureIntro />
+
+  <section class="hero container">
+    <div class="hero-text">
+      <p class="eyebrow">{site.role}</p>
+      <h1 class="hero-name" data-signature-home>Viviana Acosta</h1>
+      <p class="tagline t-1">{site.taglineA}</p>
+      <p class="tagline-b eyebrow">{site.taglineB}</p>
+    </div>
+    <div class="hero-orb" aria-hidden="true">
+      <Orb preset="heroAmbient" />
+    </div>
+  </section>
+
+  <section class="mission container">
+    <p class="t-5 mission-line">{site.missionHero}</p>
+  </section>
+
+  <section class="section container intro-row">
+    <div class="intro-portrait">
+      <EditorialImage
+        src={portrait}
+        alt="Viviana Acosta"
+        widths={[400, 700, 1000]}
+        sizes="(max-width: 760px) 80vw, 360px"
+      />
+    </div>
+    <div class="intro-copy">
+      <p class="t-1 prose-width">{bio[0]}</p>
+      <p class="prose-width intro-second">{bio[1]}</p>
+      <a class="more ui" href="/about">More about Viviana</a>
+    </div>
+  </section>
+
+  <section class="section container">
+    <SectionHeading eyebrow="Selected Works" title="Writing" />
+    {
+      featured.map(({ work, rendered }) => (
+        <WorkRow
+          title={work.data.title}
+          subtitle={work.data.subtitle}
+          status={work.data.status}
+          href={hrefs[work.id] ?? '/writing'}
+          cover={covers[work.id] ?? null}
+          reverse={work.data.category === 'short-fiction'}
+        >
+          <rendered.Content />
+        </WorkRow>
+      ))
+    }
+    <p class="all-writing">
+      <a class="more ui" href="/writing">All writing</a>
+      <a class="more ui" href="/writing/bibliography">Bibliography</a>
+    </p>
+  </section>
+
+  {
+    latest && (
+      <section class="section container">
+        <SectionHeading eyebrow="From the Blog" title="Notes on the writing life" />
+        <PostCard
+          title={latest.data.title}
+          description={latest.data.description}
+          date={latest.data.date}
+          href={`/blog/${latest.id}`}
+          cover={latest.data.cover}
+        />
+        <p class="all-writing">
+          <a class="more ui" href="/blog">All posts</a>
+        </p>
+      </section>
+    )
+  }
+
+  <section class="section container causes-strip">
+    <SectionHeading eyebrow="Causes" title="Join me in supporting these worthy organizations" />
+    <p class="prose-width causes-line">
+      The League of Women Voters, the American Civil Liberties Union, and Project Street Vet.
+      <a href="/causes">See why they matter</a>.
+    </p>
+  </section>
+</Page>
+
+<style>
+  .hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: var(--space-6);
+    padding-block: var(--space-9) var(--space-7);
+    min-height: 52dvh;
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 380;
+    font-variation-settings: 'SOFT' 0, 'WONK' 1;
+    font-size: clamp(3.4rem, 9vw, 6.4rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--sig-ink);
+    margin-block: var(--space-4);
+    view-transition-name: wordmark;
+  }
+
+  .tagline {
+    color: var(--text-2);
+  }
+
+  .tagline-b {
+    margin-block-start: var(--space-3);
+    color: var(--copper);
+  }
+
+  .hero-orb {
+    justify-self: end;
+  }
+
+  .mission {
+    padding-block: var(--space-7);
+    border-top: 1px solid var(--line);
+  }
+
+  .mission-line {
+    max-width: 24ch;
+    color: var(--text-1);
+  }
+
+  .intro-row {
+    display: grid;
+    grid-template-columns: minmax(0, 360px) 1fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  .intro-second {
+    margin-block-start: var(--space-4);
+    color: var(--text-2);
+  }
+
+  .more {
+    display: inline-block;
+    margin-block-start: var(--space-5);
+    font-size: 0.9rem;
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-strong);
+    padding-block-end: 2px;
+  }
+
+  .more:hover {
+    color: var(--gold-bright);
+    border-color: var(--gold-bright);
+  }
+
+  .more + .more {
+    margin-inline-start: var(--space-6);
+  }
+
+  .causes-line {
+    color: var(--text-2);
+  }
+
+  .causes-line a {
+    color: var(--gold);
+  }
+
+  @media (max-width: 860px) {
+    .hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+    .hero-orb {
+      display: none;
+    }
+    .intro-row {
+      grid-template-columns: 1fr;
+    }
+    .intro-portrait {
+      max-width: 20rem;
+    }
+  }
+</style>

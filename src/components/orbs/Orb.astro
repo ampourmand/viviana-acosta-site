@@ -1,0 +1,22 @@
+---
+import type { OrbPresetName } from '@lib/orbs/orb-presets';
+
+interface Props {
+  preset: OrbPresetName;
+  size?: number;
+  class?: string;
+}
+const { preset, size, class: className } = Astro.props;
+---
+
+<canvas
+  class:list={['orb', className]}
+  data-orb={preset}
+  {...size ? { 'data-orb-size': String(size) } : {}}
+  aria-hidden="true"></canvas>
+
+<style>
+  .orb {
+    display: block;
+  }
+</style>

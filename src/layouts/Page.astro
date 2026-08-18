@@ -1,0 +1,20 @@
+---
+import Base from './Base.astro';
+import SiteHeader from '@components/chrome/SiteHeader.astro';
+import SiteFooter from '@components/chrome/SiteFooter.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}
+const { title, description, ogImage } = Astro.props;
+---
+
+<Base {title} {description} {ogImage}>
+  <SiteHeader />
+  <main id="main">
+    <slot />
+  </main>
+  <SiteFooter />
+</Base>

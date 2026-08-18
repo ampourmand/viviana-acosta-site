@@ -1,0 +1,89 @@
+/* ---------------------------------------------------------------------------
+   Design tokens. One palette, one scale, one motion vocabulary.
+   Gold means "you can touch this." Copper means "ornament." Never both.
+--------------------------------------------------------------------------- */
+:root {
+  /* Canvas: warm charcoal, never blue-black */
+  --ink-950: #121110;
+  --ink-900: #171614;
+  --ink-800: #201e1b;
+  --ink-well: #0d0c0b;
+
+  /* Text: warm paper, never pure white */
+  --text-1: #ece7dd;
+  --text-2: #b5ad9f;
+  --text-3: #7d766a;
+
+  /* Accent */
+  --gold: #c6a15b;
+  --gold-bright: #dcbe83;
+  --copper: #b0703c;
+  --line: rgb(198 161 91 / 0.14);
+  --line-strong: rgb(198 161 91 / 0.32);
+  --focus-ring: rgb(220 190 131 / 0.7);
+
+  /* Ink for the signature artwork */
+  --sig-ink: #e8e0cf;
+
+  /* Spacing: 4px ladder */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+  --space-11: 10rem;
+  --space-12: 12rem;
+
+  --measure-prose: 38rem;
+  --container: 72rem;
+  --gutter: clamp(1.25rem, 4vw, 2.5rem);
+
+  /* Motion: CSS gets durations/eases; spring pairs live in lib/motion/tokens.ts */
+  --dur-quick: 160ms;
+  --dur-base: 260ms;
+  --dur-slow: 480ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Chrome */
+  --header-h: 4.25rem;
+  --header-bg: rgb(18 17 16 / 0.72);
+  --header-blur: 18px;
+
+  /* Z-layers */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-header: 100;
+  --z-intro: 1000;
+  --z-skiplink: 1100;
+}
+
+/* Preference overrides flow through the same tokens the components consume. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-quick: 1ms;
+    --dur-base: 1ms;
+    --dur-slow: 1ms;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --header-bg: #171614;
+    --header-blur: 0px;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --text-2: #d4cdc0;
+    --text-3: #aaa294;
+    --line: rgb(198 161 91 / 0.42);
+    --line-strong: rgb(198 161 91 / 0.6);
+  }
+}

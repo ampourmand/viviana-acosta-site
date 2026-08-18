@@ -1,0 +1,183 @@
+---
+import Page from '../../layouts/Page.astro';
+import SectionHeading from '@components/shared/SectionHeading.astro';
+import Orb from '@components/orbs/Orb.astro';
+import EditorialImage from '@components/shared/EditorialImage.astro';
+
+import coverAscension from '@assets/photos/cover-ascension.jpg';
+import coverICantSee from '@assets/photos/cover-i-cant-see.jpg';
+import coverBesitos from '@assets/photos/cover-besitos-de-coco.jpg';
+
+const sections = [
+  {
+    href: '/writing/picture-books',
+    label: 'Picture Books',
+    line: 'Hubble, telescopes with feelings, and complex real problems made relatable for the youngest readers.',
+    cover: coverICantSee,
+  },
+  {
+    href: '/writing/short-fiction',
+    label: 'Short Fiction',
+    line: 'Microfiction and flash pieces, from a terraformed asteroid to a self storage facility.',
+    cover: coverBesitos,
+  },
+  {
+    href: '/writing/ascension',
+    label: 'Young Adult Novel',
+    line: 'Ascension, the work-in-progress debut: family or future.',
+    cover: coverAscension,
+  },
+];
+---
+
+<Page
+  title="Writing"
+  description="Picture books, short fiction, and a young adult novel in progress by Viviana Acosta."
+>
+  <section class="section container">
+    <SectionHeading eyebrow="Writing" title="Stories for children of all ages" />
+    <p class="lede prose-width">
+      Science and speculative fiction centering people of color and the immigrant diaspora, written
+      so that the kids who read them feel safe and seen.
+    </p>
+
+    <div class="cards">
+      {
+        sections.map((s) => (
+          <a class="card pressable" href={s.href} data-hover-orb>
+            <div class="card-cover">
+              <EditorialImage src={s.cover} alt="" widths={[400, 700]} sizes="(max-width: 700px) 90vw, 340px" />
+            </div>
+            <div class="card-body">
+              <h2 class="t-2">{s.label}</h2>
+              <p>{s.line}</p>
+              <span class="ui go">Explore</span>
+            </div>
+            <div class="card-orb" aria-hidden="true">
+              <Orb preset="hoverAccent" size={72} />
+            </div>
+          </a>
+        ))
+      }
+    </div>
+
+    <p class="bib-link">
+      Looking for the full list? <a href="/writing/bibliography">Read the bibliography</a>.
+    </p>
+  </section>
+</Page>
+
+<style>
+  .lede {
+    color: var(--text-2);
+    font-size: 1.15rem;
+    margin-block-end: var(--space-7);
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 340px) 1fr auto;
+    gap: var(--space-6);
+    align-items: center;
+    padding-block: var(--space-6);
+    text-decoration: none;
+    color: var(--text-1);
+  }
+
+  .card + .card {
+    border-top: 1px solid var(--line);
+  }
+
+  .card-cover {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .card-body p {
+    color: var(--text-2);
+    max-width: 34rem;
+    margin-block-start: var(--space-3);
+  }
+
+  .go {
+    display: inline-block;
+    margin-block-start: var(--space-4);
+    font-size: 0.9rem;
+    color: var(--gold);
+    border-bottom: 1px solid var(--line-strong);
+    padding-block-end: 2px;
+  }
+
+  .card:hover .go {
+    color: var(--gold-bright);
+    border-color: var(--gold-bright);
+  }
+
+  .card:hover h2 {
+    color: var(--gold-bright);
+  }
+
+  .card-orb {
+    opacity: 0.4;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+
+  .card:hover .card-orb {
+    opacity: 1;
+  }
+
+  .bib-link {
+    margin-block-start: var(--space-7);
+    color: var(--text-2);
+  }
+
+  .bib-link a {
+    color: var(--gold);
+  }
+
+  @media (max-width: 860px) {
+    .card {
+      grid-template-columns: 1fr;
+    }
+    .card-orb {
+      display: none;
+    }
+    .card-cover {
+      max-width: 22rem;
+    }
+  }
+</style>
+
+<script>
+  import { registerModule } from '@lib/transitions/vt';
+  import type { Orb } from '@lib/orbs/orb-engine';
+
+  registerModule({
+    init() {
+      const cleanups: Array<() => void> = [];
+      for (const card of document.querySelectorAll<HTMLElement>('[data-hover-orb]')) {
+        const canvas = card.querySelector<HTMLCanvasElement & { __orb?: Orb }>('canvas[data-orb]');
+        if (!canvas) continue;
+        const enter = () => canvas.__orb?.setSpeedTarget(3.2);
+        const leave = () => canvas.__orb?.setSpeedTarget(1);
+        card.addEventListener('pointerenter', enter);
+        card.addEventListener('pointerleave', leave);
+        card.addEventListener('focusin', enter);
+        card.addEventListener('focusout', leave);
+        cleanups.push(() => {
+          card.removeEventListener('pointerenter', enter);
+          card.removeEventListener('pointerleave', leave);
+          card.removeEventListener('focusin', enter);
+          card.removeEventListener('focusout', leave);
+        });
+      }
+      return () => cleanups.forEach((fn) => fn());
+    },
+  });
+</script>

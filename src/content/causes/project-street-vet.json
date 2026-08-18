@@ -1,0 +1,10 @@
+{
+  "name": "Project Street Vet",
+  "url": "https://www.projectstreetvet.org/",
+  "blurb": "Free veterinary care for the pets of people experiencing homelessness.",
+  "order": 3,
+  "handles": [
+    { "platform": "instagram", "url": "https://www.instagram.com/thestreetvet/", "label": "@thestreetvet" },
+    { "platform": "x", "url": "https://twitter.com/thestreetvet", "label": "@thestreetvet" }
+  ]
+}

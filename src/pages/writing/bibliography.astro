@@ -1,0 +1,133 @@
+---
+import { getCollection } from 'astro:content';
+import Page from '../../layouts/Page.astro';
+import SectionHeading from '@components/shared/SectionHeading.astro';
+import { categoryLabel, statusLabel } from '@lib/format';
+
+const works = (await getCollection('works')).sort((a, b) => a.data.order - b.data.order);
+
+const groups = ['ya-novel', 'picture-book', 'short-fiction', 'poetry', 'other'] as const;
+const grouped = groups
+  .map((cat) => ({
+    cat,
+    label: categoryLabel(cat),
+    items: works.filter((w) => w.data.category === cat),
+  }))
+  .filter((g) => g.items.length > 0);
+---
+
+<Page title="Bibliography" description="Works in progress and completed works by Viviana Acosta.">
+  <section class="section container">
+    <SectionHeading eyebrow="Writing" title="Bibliography" />
+    <p class="lede prose-width">
+      Works in progress and works out in the world. Details land here as each project moves from
+      the notebook toward the shelf.
+    </p>
+
+    {
+      grouped.map((group) => (
+        <div class="group">
+          <h2 class="t-2 group-title">{group.label}</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Length</th>
+                  <th scope="col">Genre</th>
+                </tr>
+              </thead>
+              <tbody>
+                {group.items.map((w) => (
+                  <tr>
+                    <th scope="row">
+                      <span class="w-title">{w.data.title}</span>
+                      {w.data.subtitle && <span class="w-sub">{w.data.subtitle}</span>}
+                    </th>
+                    <td>
+                      {w.data.status === 'tbd' ? (
+                        <span class="tbd">{statusLabel(w.data.status)}</span>
+                      ) : (
+                        statusLabel(w.data.status)
+                      )}
+                    </td>
+                    <td>
+                      {w.data.wordCount != null ? (
+                        `${w.data.wordCount.toLocaleString('en-US')} words`
+                      ) : (
+                        <span class="tbd">TBD</span>
+                      )}
+                    </td>
+                    <td>{w.data.genre ?? <span class="tbd">TBD</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))
+    }
+  </section>
+</Page>
+
+<style>
+  .lede {
+    color: var(--text-2);
+    margin-block-end: var(--space-7);
+  }
+
+  .group {
+    margin-block-end: var(--space-8);
+  }
+
+  .group-title {
+    margin-block-end: var(--space-4);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  thead th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+    color: var(--gold);
+    padding: 0.6rem 1rem 0.6rem 0;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  tbody th,
+  tbody td {
+    text-align: left;
+    font-weight: 390;
+    vertical-align: baseline;
+    padding: 0.85rem 1rem 0.85rem 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--text-2);
+  }
+
+  .w-title {
+    display: block;
+    color: var(--text-1);
+    font-size: 1.05rem;
+  }
+
+  .w-sub {
+    display: block;
+    font-style: italic;
+    color: var(--text-3);
+    font-size: 0.9rem;
+    margin-block-start: 0.2rem;
+  }
+</style>

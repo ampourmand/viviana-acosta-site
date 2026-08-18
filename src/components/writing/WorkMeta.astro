@@ -1,0 +1,39 @@
+---
+import { metaEntries } from '@lib/format';
+
+interface Props {
+  work: Parameters<typeof metaEntries>[0];
+}
+const { work } = Astro.props;
+const entries = metaEntries(work);
+---
+
+{
+  entries.length > 0 && (
+    <dl class="work-meta">
+      {entries.map((entry) => (
+        <div class="pair">
+          <dt class="eyebrow">{entry.label}</dt>
+          <dd>{entry.value}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
+<style>
+  .work-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-7);
+    margin: 0;
+    padding-block: var(--space-4);
+    border-block: 1px solid var(--line);
+  }
+
+  .pair dd {
+    margin: 0.3rem 0 0;
+    color: var(--text-2);
+    font-size: 0.95rem;
+  }
+</style>
