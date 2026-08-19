@@ -13,6 +13,7 @@
     "check": "astro check",
     "ingest": "tsx scripts/ingest-photos.ts",
     "signature": "tsx scripts/build-signature.ts",
+    "clouds": "tsx scripts/build-clouds.ts",
     "lint:copy": "tsx scripts/check-copy.ts"
   },
   "dependencies": {

@@ -48,7 +48,12 @@ const { Content } = await render(work);
   .ascension-hero {
     position: relative;
     overflow: hidden;
-    background: var(--ink-well);
+    background-color: var(--ink-well);
+    background-image:
+      linear-gradient(rgb(16 12 26 / 0.45), rgb(16 12 26 / 0.72)),
+      image-set(url('/clouds/clouds-hero.webp') type('image/webp'), url('/clouds/clouds-hero.jpg') type('image/jpeg'));
+    background-size: cover;
+    background-position: center;
     padding-block: var(--space-10) var(--space-9);
   }
 

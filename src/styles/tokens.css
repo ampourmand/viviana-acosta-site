@@ -1,29 +1,30 @@
 /* ---------------------------------------------------------------------------
    Design tokens. One palette, one scale, one motion vocabulary.
-   Gold means "you can touch this." Copper means "ornament." Never both.
+   Deep violet ink, clouds of purple glinting pink and blue.
+   Orchid means "you can touch this." Periwinkle means "ornament."
 --------------------------------------------------------------------------- */
 :root {
-  /* Canvas: warm charcoal, never blue-black */
-  --ink-950: #121110;
-  --ink-900: #171614;
-  --ink-800: #201e1b;
-  --ink-well: #0d0c0b;
+  /* Canvas: deep aubergine violet, never flat black */
+  --ink-950: #151021;
+  --ink-900: #1b1530;
+  --ink-800: #251d3f;
+  --ink-well: #100c1a;
 
-  /* Text: warm paper, never pure white */
-  --text-1: #ece7dd;
-  --text-2: #b5ad9f;
-  --text-3: #7d766a;
+  /* Text: soft lavender paper, never pure white */
+  --text-1: #ece7f6;
+  --text-2: #b4abc9;
+  --text-3: #7e7495;
 
   /* Accent */
-  --gold: #c6a15b;
-  --gold-bright: #dcbe83;
-  --copper: #b0703c;
-  --line: rgb(198 161 91 / 0.14);
-  --line-strong: rgb(198 161 91 / 0.32);
-  --focus-ring: rgb(220 190 131 / 0.7);
+  --accent: #d9a2c9;
+  --accent-bright: #eebede;
+  --ornament: #8fa3e8;
+  --line: rgb(197 168 226 / 0.16);
+  --line-strong: rgb(197 168 226 / 0.36);
+  --focus-ring: rgb(238 190 222 / 0.7);
 
   /* Ink for the signature artwork */
-  --sig-ink: #e8e0cf;
+  --sig-ink: #efe9f8;
 
   /* Spacing: 4px ladder */
   --space-1: 0.25rem;
@@ -52,7 +53,7 @@
 
   /* Chrome */
   --header-h: 4.25rem;
-  --header-bg: rgb(18 17 16 / 0.72);
+  --header-bg: rgb(21 16 33 / 0.72);
   --header-blur: 18px;
 
   /* Z-layers */
@@ -74,16 +75,16 @@
 
 @media (prefers-reduced-transparency: reduce) {
   :root {
-    --header-bg: #171614;
+    --header-bg: #1b1530;
     --header-blur: 0px;
   }
 }
 
 @media (prefers-contrast: more) {
   :root {
-    --text-2: #d4cdc0;
-    --text-3: #aaa294;
-    --line: rgb(198 161 91 / 0.42);
-    --line-strong: rgb(198 161 91 / 0.6);
+    --text-2: #d6cfe6;
+    --text-3: #ada3c4;
+    --line: rgb(197 168 226 / 0.44);
+    --line-strong: rgb(197 168 226 / 0.62);
   }
 }

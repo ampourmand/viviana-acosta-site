@@ -316,9 +316,9 @@ const modes: Record<OrbMode, (cfg: OrbConfig, t: number) => OrbFrame> = {
 /* Painter: ink value -> warm two-stop ramp. Matte fills only.         */
 /* ------------------------------------------------------------------ */
 
-const NEAR = { r: 0xe6, g: 0xd3, b: 0xb3 }; // pale champagne
-const FAR = { r: 0x47, g: 0x42, b: 0x3a }; // dim warm gray
-const COPPER = { r: 0xb0, g: 0x70, b: 0x3c };
+const NEAR = { r: 0xee, g: 0xd9, b: 0xec }; // pale pink lavender
+const FAR = { r: 0x45, g: 0x3d, b: 0x5c }; // dim violet
+const COPPER = { r: 0x8f, g: 0xa3, b: 0xe8 }; // periwinkle accent
 
 function inkColor(ink: number, accent: boolean): string {
   const t = 1 - ink; // 1 near, 0 far

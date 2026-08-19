@@ -64,7 +64,7 @@ const causes = (await getCollection('causes')).sort((a, b) => a.data.order - b.d
   }
 
   .cause h2 a:hover {
-    color: var(--gold-bright);
+    color: var(--accent-bright);
   }
 
   .blurb {
@@ -82,14 +82,14 @@ const causes = (await getCollection('causes')).sort((a, b) => a.data.order - b.d
   }
 
   .handles a {
-    color: var(--gold);
+    color: var(--accent);
     text-decoration: none;
     border-bottom: 1px solid var(--line-strong);
     padding-block-end: 2px;
   }
 
   .handles a:hover {
-    color: var(--gold-bright);
-    border-color: var(--gold-bright);
+    color: var(--accent-bright);
+    border-color: var(--accent-bright);
   }
 </style>

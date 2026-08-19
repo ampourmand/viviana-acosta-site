@@ -50,6 +50,29 @@ main {
   z-index: var(--z-base);
 }
 
+/* Clouds of deep purple glinting pink and blue: a fixed, quiet backdrop.
+   Sits above the body ground, below all content. */
+.cloud-layer {
+  position: fixed;
+  inset: -4%;
+  z-index: 0;
+  pointer-events: none;
+  background-image: image-set(url('/clouds/clouds-base.webp') type('image/webp'), url('/clouds/clouds-base.jpg') type('image/jpeg'));
+  background-size: cover;
+  background-position: center;
+  opacity: 0.62;
+  animation: cloud-drift 120s var(--ease-in-out) infinite alternate;
+}
+
+@keyframes cloud-drift {
+  from { transform: translate3d(-1.2%, -0.8%, 0) scale(1); }
+  to { transform: translate3d(1.2%, 0.8%, 0) scale(1.05); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud-layer { animation: none; }
+}
+
 img, picture, svg, canvas, video {
   display: block;
   max-width: 100%;
@@ -72,12 +95,12 @@ a {
 }
 
 a:hover {
-  color: var(--gold-bright);
-  text-decoration-color: var(--gold-bright);
+  color: var(--accent-bright);
+  text-decoration-color: var(--accent-bright);
 }
 
 ::selection {
-  background: rgb(198 161 91 / 0.28);
+  background: rgb(217 162 201 / 0.3);
   color: var(--text-1);
 }
 

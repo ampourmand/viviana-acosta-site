@@ -1,10 +1,14 @@
 # Viviana Acosta — vivianaacosta.com
 
 A hand-built portfolio for Viviana Acosta: author and engineer. Astro 5,
-TypeScript, GSAP, and a custom canvas orb engine on a warm-charcoal, gold-ink
-design system. The homepage opens with a fountain-pen signature intro
+TypeScript, GSAP, and a custom canvas orb engine on a deep-violet design
+system: clouds of purple glinting into pink and blue, orchid accents,
+periwinkle ornament. The homepage opens with a fountain-pen signature intro
 (Monsieur La Doulaise baked to SVG outlines, mask-reveal animation, macro
 camera pull-back).
+
+Regenerate the cloud backdrops (deterministic fBm renders in public/clouds/)
+with `npm run clouds`.
 
 ## Daily commands
 

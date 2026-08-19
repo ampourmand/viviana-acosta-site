@@ -51,10 +51,10 @@
 .prose strong { font-weight: 620; }
 
 .prose a {
-  color: var(--gold);
-  text-decoration-color: rgb(198 161 91 / 0.4);
+  color: var(--accent);
+  text-decoration-color: rgb(217 162 201 / 0.4);
 }
 
 .prose a:hover {
-  color: var(--gold-bright);
+  color: var(--accent-bright);
 }

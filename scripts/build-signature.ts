@@ -153,16 +153,16 @@ const lab = `<!doctype html>
 <meta charset="utf-8">
 <title>Signature Lab</title>
 <style>
-  body { margin: 0; background: #121110; color: #ece7dd; font: 14px/1.5 system-ui; padding: 2rem; }
+  body { margin: 0; background: #151021; color: #ece7dd; font: 14px/1.5 system-ui; padding: 2rem; }
   .stage { max-width: 1100px; margin-inline: auto; }
   svg { width: 100%; height: auto; display: block; }
-  .glyphs path { fill: #e8e0cf; }
-  .guides path { fill: none; stroke: rgb(198 161 91 / 0.55); stroke-linecap: round; }
+  .glyphs path { fill: #efe9f8; }
+  .guides path { fill: none; stroke: rgb(217 162 201 / 0.55); stroke-linecap: round; }
   .guides.hidden { display: none; }
   .controls { display: flex; gap: 1rem; align-items: center; margin-block: 1.5rem; }
   input[type=range] { flex: 1; }
-  button { background: none; border: 1px solid #c6a15b; color: #c6a15b; border-radius: 4px; padding: .4rem .9rem; cursor: pointer; }
-  .nib-dot { fill: #b0703c; }
+  button { background: none; border: 1px solid #d9a2c9; color: #d9a2c9; border-radius: 4px; padding: .4rem .9rem; cursor: pointer; }
+  .nib-dot { fill: #8fa3e8; }
 </style>
 </head>
 <body>
@@ -250,11 +250,11 @@ const ogScale = Math.min((OG_W - 260) / sigW, 300 / sigH);
 const ogX = (OG_W - sigW * ogScale) / 2;
 const ogY = (OG_H - sigH * ogScale) / 2 - 20;
 const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${OG_W}" height="${OG_H}">
-  <rect width="${OG_W}" height="${OG_H}" fill="#121110"/>
+  <rect width="${OG_W}" height="${OG_H}" fill="#151021"/>
   <g transform="translate(${r2(ogX)}, ${r2(ogY)}) scale(${r2(ogScale)}) translate(${r2(-minX)}, ${r2(-minY)})">
-${inked.map((g) => `    <path d="${g.pathData}" fill="#e8e0cf"/>`).join('\n')}
+${inked.map((g) => `    <path d="${g.pathData}" fill="#efe9f8"/>`).join('\n')}
   </g>
-  <rect x="${OG_W / 2 - 60}" y="${OG_H - 118}" width="120" height="2" fill="#c6a15b"/>
+  <rect x="${OG_W / 2 - 60}" y="${OG_H - 118}" width="120" height="2" fill="#d9a2c9"/>
 </svg>`;
 
 const { default: sharp } = await import('sharp');

@@ -16,7 +16,7 @@ export type GradeProfile = 'editorial' | 'natural';
 export function applyGrade(img: sharp.Sharp, profile: GradeProfile): sharp.Sharp {
   const base = img
     .rotate() // honor EXIF orientation, then strip it
-    .flatten({ background: '#121110' });
+    .flatten({ background: '#151021' });
 
   if (profile === 'natural') {
     return base.resize({
@@ -29,13 +29,13 @@ export function applyGrade(img: sharp.Sharp, profile: GradeProfile): sharp.Sharp
 
   return base
     .resize({ width: 2560, height: 2560, fit: 'inside', withoutEnlargement: true })
-    .modulate({ saturation: 0.86, brightness: 0.99 })
-    // Gentle black lift + soft rolloff toward the charcoal ground.
+    .modulate({ saturation: 0.9, brightness: 0.99 })
+    // Gentle black lift + soft rolloff toward the violet ground.
     .linear(0.94, 8)
-    // Warm cast: nudge red up, pull blue down.
+    // Cool mauve cast: a touch of red kept, blue lifted.
     .recomb([
-      [1.03, 0.02, 0.0],
-      [0.01, 1.0, 0.0],
-      [0.0, 0.01, 0.93],
+      [1.0, 0.02, 0.02],
+      [0.01, 0.98, 0.03],
+      [0.02, 0.02, 1.05],
     ]);
 }

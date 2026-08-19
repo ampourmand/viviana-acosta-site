@@ -48,7 +48,12 @@ import { site } from '@data/site';
   .sig-bg {
     position: absolute;
     inset: 0;
-    background: var(--ink-950);
+    background-color: var(--ink-950);
+    background-image:
+      linear-gradient(rgb(21 16 33 / 0.5), rgb(21 16 33 / 0.78)),
+      image-set(url('/clouds/clouds-hero.webp') type('image/webp'), url('/clouds/clouds-hero.jpg') type('image/jpeg'));
+    background-size: cover;
+    background-position: center;
   }
 
   .sig-stage {
@@ -79,7 +84,7 @@ import { site } from '@data/site';
     flex-direction: column;
     align-items: center;
     gap: var(--space-3);
-    color: var(--gold);
+    color: var(--accent);
     font-size: 0.85rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -88,7 +93,7 @@ import { site } from '@data/site';
   }
 
   .sig-prompt:hover {
-    color: var(--gold-bright);
+    color: var(--accent-bright);
   }
 
   .prompt-line {
