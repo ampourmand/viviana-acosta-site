@@ -1,0 +1,237 @@
+---
+/**
+ * A pile of prints you can flick through, like photos left on a desk.
+ * Drag the top print and it follows the pointer 1:1; flick it and it sails
+ * off and tucks to the back of the pile. Tap, arrow keys, and the two text
+ * buttons do the same. Physics live in @lib/stack/photo-stack.
+ *
+ * Mount it in a block that spans its column: the pile centers itself and
+ * prints need room on both sides to fly.
+ */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { restPose, poseTransform } from '@lib/stack/photo-stack';
+
+interface Photo {
+  src: ImageMetadata;
+  alt: string;
+  caption: string;
+}
+
+interface Props {
+  photos: Photo[];
+  /** Accessible name for the pile. */
+  label?: string;
+  /** Unique per page if more than one stack is mounted. */
+  id?: string;
+  class?: string;
+}
+
+const { photos, label = 'Photographs', id = 'photo-stack', class: className } = Astro.props;
+const count = photos.length;
+const first = photos[0];
+---
+
+<div class:list={['photo-stack', className]} data-photo-stack>
+  <div
+    class="pile"
+    data-stack-pile
+    tabindex="0"
+    role="group"
+    aria-roledescription="photo stack"
+    aria-label={label}
+    aria-describedby={`${id}-hint`}
+  >
+    {
+      photos.map((photo, depth) => (
+        <figure
+          class="print"
+          data-stack-print
+          data-caption={photo.caption}
+          data-deep={depth >= 3 ? '' : undefined}
+          aria-hidden={depth === 0 ? undefined : 'true'}
+          style={`transform: ${poseTransform(restPose(depth))}; z-index: ${count - depth};${depth < 2 ? ' will-change: transform;' : ''}`}
+        >
+          <Picture
+            src={photo.src}
+            alt={photo.alt}
+            widths={[480, 800]}
+            sizes="(max-width: 30rem) calc(100vw - 6rem), 21rem"
+            formats={['avif', 'webp']}
+            fallbackFormat="jpeg"
+            loading={depth === 0 ? 'eager' : 'lazy'}
+            draggable="false"
+          />
+        </figure>
+      ))
+    }
+  </div>
+
+  <div class="meta">
+    <p class="caption eyebrow" aria-live="polite" aria-atomic="true">
+      <span data-stack-caption>{first?.caption}</span><span
+        class="visually-hidden"
+        data-stack-position>. Photo 1 of {count}</span
+      >
+    </p>
+    <div class="controls ui">
+      <button type="button" data-stack-prev>Previous</button>
+      <span class="counter" data-stack-counter aria-hidden="true">1 / {count}</span>
+      <button type="button" data-stack-next>Next</button>
+    </div>
+  </div>
+
+  <p class="visually-hidden" id={`${id}-hint`}>
+    Drag or flick the top photo aside to see the next one, or use the left and right arrow keys.
+  </p>
+</div>
+
+<style>
+  .photo-stack {
+    position: relative;
+    /* Prints in flight pass over neighboring copy, never under it. */
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-6);
+    padding-block: var(--space-5) var(--space-2);
+  }
+
+  .pile {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    /* Leaves room for the fan so resting corners never touch the gutter. */
+    width: min(22rem, 100% - 3rem);
+    /* Vertical swipes still scroll the page; sideways drags move the print. */
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    cursor: grab;
+    border-radius: 2px;
+  }
+
+  .pile.is-dragging {
+    cursor: grabbing;
+  }
+
+  .pile:focus-visible {
+    /* Wide enough to take in the fanned corners. */
+    outline-offset: 28px;
+    border-radius: 8px;
+  }
+
+  .print {
+    grid-area: 1 / 1;
+    position: relative;
+    margin: 0;
+    padding: 10px;
+    background: var(--paper-print);
+    border-radius: 2px;
+    box-shadow: var(--shadow-rest);
+    transform-origin: 50% 50%;
+  }
+
+  /* Buried prints only need a contact shadow; a pile is not six shadows deep. */
+  .print[data-deep] {
+    box-shadow: 0 1px 2px rgb(var(--shadow-color) / 0.14);
+  }
+
+  /* The lifted shadow fades in on press: opacity only, never box-shadow. */
+  .print::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: var(--shadow-lift);
+    opacity: 0;
+    transition: opacity var(--dur-quick) var(--ease-out);
+    pointer-events: none;
+  }
+
+  .print.is-held::after {
+    opacity: 1;
+  }
+
+  .print :global(picture) {
+    display: block;
+  }
+
+  .print :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 1px;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .meta {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
+    text-align: center;
+  }
+
+  .caption {
+    min-height: 1.4em;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    font-size: 0.9rem;
+  }
+
+  .controls button {
+    color: var(--accent);
+    padding: 0.7rem 0.4rem;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.3em;
+    touch-action: manipulation;
+    transition:
+      transform 100ms ease-out,
+      color var(--dur-quick) var(--ease-out),
+      text-decoration-color var(--dur-quick) var(--ease-out);
+  }
+
+  .controls button:hover {
+    color: var(--accent-bright);
+    text-decoration-color: currentColor;
+  }
+
+  .controls button:active {
+    transform: scale(0.96);
+  }
+
+  .counter {
+    min-width: 5ch;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-3);
+  }
+</style>
+
+<script>
+  import { registerModule } from '@lib/transitions/vt';
+  import { mountPhotoStack } from '@lib/stack/photo-stack';
+
+  registerModule({
+    init() {
+      const cleanups = Array.from(
+        document.querySelectorAll<HTMLElement>('[data-photo-stack]'),
+        (root) => mountPhotoStack(root),
+      );
+      return () => cleanups.forEach((fn) => fn());
+    },
+  });
+</script>

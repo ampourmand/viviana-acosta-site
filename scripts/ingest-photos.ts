@@ -44,9 +44,12 @@ const personal: Record<string, string> = {
 
 /** Remote (rescued from Squarespace): which grade each gets. */
 const remoteProfiles: Record<string, GradeProfile> = {
-  'portrait-about.png': 'editorial',
-  'portrait-home-collage.png': 'natural',
+  // Her studio headshot is already color-managed: leave it alone.
+  'portrait-headshot.png': 'natural',
 };
+
+/** Archived from the old site but no longer used anywhere. */
+const retired = new Set(['portrait-about.png', 'portrait-home-collage.png']);
 
 interface ManifestEntry {
   width: number;
@@ -106,6 +109,7 @@ async function main() {
   for (const file of readdirSync(REMOTE).sort()) {
     const ext = extname(file).toLowerCase();
     if (!['.png', '.jpg', '.jpeg', '.gif'].includes(ext)) continue;
+    if (retired.has(file)) continue;
     const slug = basename(file, ext);
     if (ext === '.gif' && isAnimatedGif(join(REMOTE, file))) {
       // Animated planner flip-throughs stay animated; copy untouched.

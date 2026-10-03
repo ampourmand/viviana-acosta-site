@@ -1,0 +1,110 @@
+---
+/**
+ * A photographic print: paper border, a physical shadow, optionally held
+ * down by a strip of washi tape (she decorates her planners with it). Leans
+ * toward the pointer like a real object.
+ */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  /** Resting rotation in degrees. */
+  rotate?: number;
+  tape?: boolean;
+  widths?: number[];
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  rotate = 0,
+  tape = false,
+  widths = [400, 640, 800],
+  sizes = '(max-width: 760px) 80vw, 380px',
+  loading = 'lazy',
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<figure
+  class:list={['print', className]}
+  data-tilt
+  data-tilt-base={`rotate(${rotate}deg)`}
+  style={`transform: rotate(${rotate}deg)`}
+  {...rest}
+>
+  {tape && <span class="tape" aria-hidden="true" />}
+  <Picture
+    {src}
+    {alt}
+    {widths}
+    {sizes}
+    {loading}
+    formats={['avif', 'webp']}
+    fallbackFormat="jpeg"
+    class="print-image"
+  />
+</figure>
+
+<style>
+  .print {
+    --tilt-lift: 0;
+    position: relative;
+    margin: 0;
+    padding: 0.7rem 0.7rem 0.75rem;
+    background: var(--paper-print);
+    border-radius: 3px;
+    box-shadow: var(--shadow-rest);
+    will-change: transform;
+  }
+
+  /* The lifted shadow cross-fades in with the tilt (opacity only). */
+  .print::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: var(--shadow-lift);
+    opacity: var(--tilt-lift);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .print :global(.print-image) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 1.5px;
+  }
+
+  /* Washi tape: translucent rose, torn ends. */
+  .tape {
+    position: absolute;
+    top: -0.85rem;
+    left: 50%;
+    width: 6.2rem;
+    height: 1.7rem;
+    transform: translateX(-50%) rotate(-3.5deg);
+    background-color: rgb(201 138 155 / 0.62);
+    background-image: repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.16) 0 0.5rem,
+      rgb(255 255 255 / 0) 0.5rem 1rem
+    );
+    clip-path: polygon(
+      0% 0%, 3% 14%, 0% 28%, 3% 42%, 0% 57%, 3% 71%, 0% 85%, 3% 100%,
+      97% 100%, 100% 85%, 97% 71%, 100% 57%, 97% 42%, 100% 28%, 97% 14%, 100% 0%
+    );
+    z-index: 2;
+  }
+</style>
+
+<script>
+  import '@lib/site/tilt';
+</script>

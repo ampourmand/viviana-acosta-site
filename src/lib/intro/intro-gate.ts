@@ -1,27 +1,25 @@
-/** Session gating for the signature intro. */
-const KEY = 'viv:intro:v1';
+/**
+ * Session gating for the book intro. The decision itself is made before
+ * first paint by the inline script in Base.astro (it adds `intro-on` to
+ * <html>); these helpers are for everything after that.
+ */
+const REPLAY = 'viv:intro:replay';
 
-export function shouldPlayIntro(): boolean {
+/** True when the inline head script decided the intro should play. */
+export function introRequested(): boolean {
+  return document.documentElement.classList.contains('intro-on');
+}
+
+/** Ask for the intro to play on the next load of the home page. */
+export function requestReplay(): void {
   try {
-    return sessionStorage.getItem(KEY) === null;
+    sessionStorage.setItem(REPLAY, '1');
   } catch {
-    // Private-mode storage failures: play once per page lifetime instead.
-    return !(window as Window & { __vivIntroSeen?: boolean }).__vivIntroSeen;
+    // Storage unavailable: nothing to remember, the reload just shows home.
   }
 }
 
-export function markIntroSeen(): void {
-  try {
-    sessionStorage.setItem(KEY, '1');
-  } catch {
-    (window as Window & { __vivIntroSeen?: boolean }).__vivIntroSeen = true;
-  }
-}
-
-export function clearIntroSeen(): void {
-  try {
-    sessionStorage.removeItem(KEY);
-  } catch {
-    (window as Window & { __vivIntroSeen?: boolean }).__vivIntroSeen = false;
-  }
+/** The intro is over (finished, skipped, or failed): show the site. */
+export function releaseIntro(): void {
+  document.documentElement.classList.remove('intro-on');
 }

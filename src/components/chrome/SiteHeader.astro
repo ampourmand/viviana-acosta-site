@@ -1,19 +1,21 @@
 ---
 import { site } from '@data/site';
+import Logo from '@components/shared/Logo.astro';
 // Build output uses trailing-slash pathnames; normalize before comparing.
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isCurrent = (href: string) =>
   href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
-const onWriting = path.startsWith('/writing');
+// The section links ride along on the Writing sub-pages. The Writing page
+// itself is the bookshelf, whose shelf labels already lead to each section.
+const onWritingSection = path.startsWith('/writing/');
 ---
 
 <header class="site-header" data-header>
   <div class="header-inner container">
-    <a
-      class:list={['wordmark', { 'vt-wordmark': path !== '/' }]}
-      href="/"
-      aria-label="Viviana Acosta, home">Viviana Acosta</a
-    >
+    <a class="wordmark" href="/" aria-label="Viviana Acosta, home" data-wordmark>
+      <span class="mark" data-logo-mark><Logo size={30} /></span>
+      <span class="name">Viviana Acosta</span>
+    </a>
 
     <nav class="site-nav ui" aria-label="Primary">
       {
@@ -60,7 +62,7 @@ const onWriting = path.startsWith('/writing');
 </header>
 
 {
-  onWriting && (
+  onWritingSection && (
     <nav class="writing-subnav ui container" aria-label="Writing sections">
       {site.writingNav.map((item) => (
         <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
@@ -77,8 +79,8 @@ const onWriting = path.startsWith('/writing');
     top: 0;
     z-index: var(--z-header);
     background: var(--header-bg);
-    -webkit-backdrop-filter: blur(var(--header-blur)) saturate(140%);
-    backdrop-filter: blur(var(--header-blur)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--header-blur)) saturate(150%);
+    backdrop-filter: blur(var(--header-blur)) saturate(150%);
   }
 
   .header-inner {
@@ -90,33 +92,52 @@ const onWriting = path.startsWith('/writing');
   }
 
   .wordmark {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-weight: 420;
-    font-variation-settings: 'SOFT' 0, 'WONK' 1;
-    font-size: 1.35rem;
-    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
     text-decoration: none;
     color: var(--text-1);
   }
 
-  /* Only one element per page may carry the shared transition name; the
-     home hero masthead owns it on the home page. */
-  .vt-wordmark {
-    view-transition-name: wordmark;
+  .wordmark:hover {
+    color: var(--text-1);
+  }
+
+  .name {
+    font-family: var(--font-display);
+    font-weight: 460;
+    font-variation-settings: 'SOFT' 30, 'WONK' 0;
+    font-size: 1.22rem;
+    letter-spacing: -0.012em;
+  }
+
+  /* The little rocket leans into a hover, and settles back. */
+  .mark {
+    display: block;
+    transition: transform 320ms cubic-bezier(0.23, 1, 0.32, 1);
+    transform-origin: 40% 70%;
+  }
+
+  .wordmark:hover .mark {
+    transform: translate(1.5px, -2px) rotate(-6deg);
+  }
+
+  .wordmark:active .mark {
+    transform: translate(0, 1px) scale(0.94);
+    transition-duration: 90ms;
   }
 
   .site-nav {
     display: flex;
     gap: var(--space-5);
-    font-size: 0.9rem;
+    font-size: 0.92rem;
   }
 
   .nav-link {
     position: relative;
     text-decoration: none;
     color: var(--text-2);
-    padding-block: 0.4rem;
+    padding-block: 0.45rem;
   }
 
   .nav-link:hover {
@@ -124,17 +145,32 @@ const onWriting = path.startsWith('/writing');
   }
 
   .nav-link[aria-current='page'] {
-    color: var(--accent-bright);
+    color: var(--accent);
   }
 
-  .nav-link[aria-current='page']::after {
+  /* The current page is underlined by hand: one inked swash. */
+  .nav-link::after {
     content: '';
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 1px;
+    left: -6%;
+    right: -6%;
+    bottom: -0.2rem;
+    height: 0.55rem;
     background: var(--accent);
+    -webkit-mask: url('/ink/swash.svg') center / 100% 100% no-repeat;
+    mask: url('/ink/swash.svg') center / 100% 100% no-repeat;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 380ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .nav-link[aria-current='page']::after,
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  .nav-link:hover:not([aria-current='page'])::after {
+    background: var(--ornament);
   }
 
   /* Scroll edge effect: a soft fade where content meets the chrome,
@@ -145,7 +181,7 @@ const onWriting = path.startsWith('/writing');
     top: 100%;
     height: 14px;
     pointer-events: none;
-    background: linear-gradient(to bottom, rgb(21 16 33 / 0.55), transparent);
+    background: linear-gradient(to bottom, rgb(var(--shadow-color) / 0.07), transparent);
     opacity: 0;
     transition: opacity var(--dur-base) var(--ease-out);
   }
@@ -162,7 +198,7 @@ const onWriting = path.startsWith('/writing');
   }
 
   .mobile-nav {
-    background: var(--ink-900);
+    background: var(--surface-2);
     border-top: 1px solid var(--line);
   }
 
@@ -179,10 +215,12 @@ const onWriting = path.startsWith('/writing');
   }
 
   .mobile-link[aria-current='page'] {
-    color: var(--accent-bright);
+    color: var(--accent);
   }
 
   .writing-subnav {
+    position: relative;
+    z-index: var(--z-base);
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-4) var(--space-5);
@@ -200,7 +238,7 @@ const onWriting = path.startsWith('/writing');
   }
 
   .writing-subnav a[aria-current='page'] {
-    color: var(--accent-bright);
+    color: var(--accent);
   }
 
   @media (max-width: 720px) {
@@ -209,6 +247,13 @@ const onWriting = path.startsWith('/writing');
     }
     .menu-button {
       display: block;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mark,
+    .nav-link::after {
+      transition: none;
     }
   }
 </style>

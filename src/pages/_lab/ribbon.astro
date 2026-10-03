@@ -1,0 +1,105 @@
+---
+/**
+ * TEMPORARY lab page for the ribbon bookmark. Delete once the ribbon is
+ * mounted in Page.astro. The ribbon goes through Page's "overlay" slot so it
+ * renders at body level, exactly where the real mount will put it (inside
+ * <main> it would be trapped in main's stacking context, under the footer).
+ */
+import Page from '../../layouts/Page.astro';
+import RibbonBookmark from '@components/chrome/RibbonBookmark.astro';
+
+const chapters = [
+  {
+    title: 'A length of satin',
+    paragraphs: [
+      'Bookbinders call it a register: a narrow ribbon glued under the headband at the top of the spine, long enough to trail out past the bottom of the pages. It has one job. It remembers where you stopped so that you do not have to.',
+      'A good ribbon is a quiet thing. It lies flat in the gutter, it does not crease the paper, and when you lift it the book falls open at exactly the right place. Nobody praises a ribbon. They only notice when a book does not have one.',
+      'The ribbon on this page works the same way. Its length is your place in the text. Pull the tail and the page comes with it. Let go mid-pull and the page keeps going for a moment, the way a real ribbon swings after you release it.',
+    ],
+  },
+  {
+    title: 'Why not a progress bar',
+    paragraphs: [
+      'A progress bar tells you how much is left. It is a measurement, and measurements belong to software. A ribbon tells you where you are, and it belongs to books. The difference sounds small until you use both.',
+      'You can hold a ribbon. That matters more than it should. When the thing on the screen moves exactly as far as your hand moves, starting from exactly where you touched it, the screen stops feeling like glass and starts feeling like an object.',
+      'So the ribbon follows the hand one to one, it keeps the speed it had when you let go, and at either end of the page it stretches a little and gives, rather than stopping dead.',
+    ],
+  },
+  {
+    title: 'How a throw works',
+    paragraphs: [
+      'When you flick the tail, the page does not snap to wherever your finger happened to leave it. It looks at how fast you were moving and works out where that motion would come to rest if it slowed down naturally.',
+      'Then it travels there, starting at the speed your finger had. There is no seam between the dragging and the coasting. If you change your mind and touch the page, the wheel, or a key, the motion ends right there.',
+      'None of this is new. It is how a scroll view on a phone has behaved for years. It is only unusual to find it on a bookmark.',
+    ],
+  },
+  {
+    title: 'Edges that give',
+    paragraphs: [
+      'Real things slow before they stop. Pull the ribbon past the end of the page and it follows, but less and less, like cloth reaching the end of its slack. Let go and it returns.',
+      'A hard stop would say that the page is frozen. A soft one says that you have reached the end and that the page was listening the whole time.',
+      'It is a small courtesy, and most readers will never consciously see it. They will only feel that the page is well made.',
+    ],
+  },
+  {
+    title: 'For keyboards and quiet motion',
+    paragraphs: [
+      'The tail is a slider. Tab to it and the arrow keys move a tenth of the page at a time, the page keys a quarter, and Home and End do what they say.',
+      'If your system asks for reduced motion, the ribbon still scrubs the page under your hand, but nothing coasts and nothing springs. The position simply changes.',
+      'On a page too short to need a bookmark, the ribbon is not there at all.',
+    ],
+  },
+  {
+    title: 'What to try',
+    paragraphs: [
+      'Scroll normally and watch the ribbon lengthen. Drag the tail slowly and watch the page follow. Flick it and let go. While it is coasting, scroll the wheel a notch and see it stop.',
+      'Drag far past the bottom and feel the resistance. Grab it again while it is still moving. Then tab to it and try the keys.',
+      'The last screen of this page is a wine panel, so that the ribbon can be checked against a dark ground as well as paper.',
+    ],
+  },
+];
+---
+
+<Page title="Ribbon lab" description="Lab page for the ribbon bookmark." noindex>
+  <RibbonBookmark slot="overlay" />
+
+  <article class="section container" data-lab-content>
+    <header class="narrow lab-header">
+      <p class="eyebrow">Lab</p>
+      <h1 class="t-5">The ribbon bookmark</h1>
+    </header>
+    <div class="prose">
+      {
+        chapters.map((chapter) => (
+          <>
+            <h2>{chapter.title}</h2>
+            {chapter.paragraphs.map((p) => (
+              <p>{p}</p>
+            ))}
+          </>
+        ))
+      }
+    </div>
+  </article>
+
+  <section class="surface-wine lab-wine" data-lab-content>
+    <div class="container">
+      <p class="eyebrow">Dark ground</p>
+      <p class="t-3">The ribbon should stay legible here too.</p>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .lab-header {
+    margin-block-end: var(--space-7);
+  }
+
+  .lab-header h1 {
+    margin-block-start: var(--space-3);
+  }
+
+  .lab-wine {
+    padding-block: var(--space-10);
+  }
+</style>

@@ -2,9 +2,11 @@
 import Page from '../layouts/Page.astro';
 import SectionHeading from '@components/shared/SectionHeading.astro';
 import EditorialImage from '@components/shared/EditorialImage.astro';
+import Print from '@components/shared/Print.astro';
+import Ink from '@components/shared/Ink.astro';
 import { bio, missionQuote, experience, education, memberships } from '@data/about';
 
-import portrait from '@assets/photos/portrait-about.jpg';
+import portrait from '@assets/photos/portrait-headshot.jpg';
 import photoPens from '@assets/photos/photo-leuchtturm-pens.jpg';
 import photoDesert from '@assets/photos/photo-desert-hike-1.jpg';
 import photoHusky from '@assets/photos/photo-husky-hallway.jpg';
@@ -21,12 +23,13 @@ const strip = [
 <Page title="About" description={bio[0]}>
   <section class="section container about-grid">
     <div class="portrait">
-      <EditorialImage
+      <Print
         src={portrait}
-        alt="Viviana Acosta"
-        widths={[400, 700, 1000]}
-        sizes="(max-width: 860px) 90vw, 420px"
+        alt="Viviana Acosta, smiling, in a charcoal blazer"
+        rotate={-1.8}
+        tape
         loading="eager"
+        sizes="(max-width: 860px) 80vw, 400px"
       />
     </div>
 
@@ -37,7 +40,9 @@ const strip = [
       <blockquote class="mission-quote">
         <p class="quote-heading t-3">{missionQuote.heading}</p>
         <p class="quote-body t-hand">{missionQuote.body}</p>
-        <footer class="quote-signoff eyebrow">{missionQuote.signoff}</footer>
+        <footer class="quote-signoff">
+          <Ink piece="signoff" write="view" class="signoff-ink" />
+        </footer>
       </blockquote>
 
       <SectionHeading eyebrow="The Engineer" title="Experience" level="h2" />
@@ -101,7 +106,8 @@ const strip = [
 
   .portrait {
     position: sticky;
-    top: calc(var(--header-h) + var(--space-5));
+    top: calc(var(--header-h) + var(--space-7));
+    padding-inline: var(--space-3);
   }
 
   .bio-para {
@@ -112,23 +118,27 @@ const strip = [
   .mission-quote {
     margin-block: var(--space-8);
     padding-inline-start: var(--space-5);
-    border-inline-start: 1px solid var(--accent);
+    border-inline-start: 2px solid var(--rose);
   }
 
   .quote-heading {
-    color: var(--accent-bright);
+    color: var(--accent);
     margin-block-end: var(--space-4);
   }
 
   .quote-body {
     font-size: 1.25rem;
     line-height: 1.55;
-    color: var(--text-2);
+    color: var(--text-1);
     max-width: 44rem;
   }
 
   .quote-signoff {
-    margin-block-start: var(--space-4);
+    margin-block-start: var(--space-5);
+  }
+
+  .signoff-ink {
+    width: min(15rem, 70%);
   }
 
   .fact-list {

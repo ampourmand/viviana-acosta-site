@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------------
-   Base: reset, canvas, focus, selection. The ground is painted explicitly.
+   Base: reset, paper, focus, selection. The ground is painted explicitly.
 --------------------------------------------------------------------------- */
 *,
 *::before,
@@ -9,9 +9,16 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   scroll-behavior: smooth;
+  /* Anchors and focused elements land clear of the sticky header. */
+  scroll-padding-top: calc(var(--header-h) + var(--space-4));
+  /* Where scrollbars take up room, keep that room even on short pages and
+     under a scroll lock, so nothing shifts sideways. */
+  scrollbar-gutter: stable;
   -webkit-text-size-adjust: 100%;
+  background: var(--ground);
+  transition: background-color 300ms ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -19,29 +26,30 @@ html {
 }
 
 body {
-  background: var(--ink-950);
+  background: var(--ground);
   color: var(--text-1);
   font-family: var(--font-body);
-  font-weight: 390;
+  font-weight: 400;
   font-optical-sizing: auto;
   font-synthesis: none;
   font-size: 1.0625rem;
   line-height: 1.6;
-  letter-spacing: 0.005em;
+  letter-spacing: 0.003em;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   min-height: 100dvh;
 }
 
-/* Paper grain: one static turbulence tile, barely there. */
+/* Paper tooth: one static turbulence tile multiplied into the page. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.016;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.12  0 0 0 0 0.2  0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
   background-size: 240px 240px;
 }
 
@@ -50,27 +58,31 @@ main {
   z-index: var(--z-base);
 }
 
-/* Clouds of deep purple glinting pink and blue: a fixed, quiet backdrop.
-   Sits above the body ground, below all content. */
-.cloud-layer {
+/* Watercolor washes of blush, mauve, and tan pink: a fixed, quiet backdrop
+   that sits above the paper and below all content. */
+.wash-layer {
   position: fixed;
   inset: -4%;
   z-index: 0;
   pointer-events: none;
-  background-image: image-set(url('/clouds/clouds-base.webp') type('image/webp'), url('/clouds/clouds-base.jpg') type('image/jpeg'));
+  background-image: image-set(
+    url('/washes/wash-paper.webp') type('image/webp'),
+    url('/washes/wash-paper.jpg') type('image/jpeg')
+  );
   background-size: cover;
   background-position: center;
-  opacity: 0.62;
-  animation: cloud-drift 120s var(--ease-in-out) infinite alternate;
+  mix-blend-mode: multiply;
+  opacity: 0.9;
+  animation: wash-drift 140s var(--ease-in-out) infinite alternate;
 }
 
-@keyframes cloud-drift {
-  from { transform: translate3d(-1.2%, -0.8%, 0) scale(1); }
-  to { transform: translate3d(1.2%, 0.8%, 0) scale(1.05); }
+@keyframes wash-drift {
+  from { transform: translate3d(-1%, -0.6%, 0) scale(1); }
+  to { transform: translate3d(1%, 0.6%, 0) scale(1.04); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cloud-layer { animation: none; }
+  .wash-layer { animation: none; }
 }
 
 img, picture, svg, canvas, video {
@@ -100,7 +112,7 @@ a:hover {
 }
 
 ::selection {
-  background: rgb(217 162 201 / 0.3);
+  background: var(--selection);
   color: var(--text-1);
 }
 

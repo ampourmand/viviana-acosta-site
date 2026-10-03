@@ -1,0 +1,239 @@
+---
+/**
+ * Ribbon bookmark: a satin ribbon hanging from under the header whose
+ * length is the reading position. Grab the tail to scrub the page 1:1;
+ * flick it to throw the scroll with momentum. Mount once per page, outside
+ * any transformed ancestor (it is position: fixed).
+ *
+ * Starts hidden; the script shows it only on pages long enough to need it.
+ */
+---
+
+<div class="ribbon" data-ribbon data-hidden="true" data-dragging="false" data-label="false">
+  <!-- The cloth: strap + swallowtail share one soft physical shadow. -->
+  <div class="ribbon-cloth" aria-hidden="true">
+    <div class="ribbon-body" data-ribbon-body></div>
+    <div class="ribbon-fold"></div>
+    <div class="ribbon-tail-wrap" data-ribbon-tail-wrap>
+      <span class="ribbon-tail" data-ribbon-tail></span>
+    </div>
+  </div>
+  <!-- The handle: an invisible 44px hit target that rides with the tail. -->
+  <div
+    class="ribbon-handle"
+    data-ribbon-handle
+    role="slider"
+    tabindex="0"
+    aria-label="Reading position"
+    aria-orientation="vertical"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="0"
+    aria-valuetext="0 percent"
+  >
+    <span class="ribbon-label" data-ribbon-label aria-hidden="true">0%</span>
+  </div>
+</div>
+
+<style>
+  .ribbon {
+    --ribbon-w: 14px;
+    --tail-h: 22px;
+    --hit-pad-top: 12px;
+    /* Satin: a quiet sheen across the width, with woven selvage edges that
+       keep the ribbon legible over wine sections too. */
+    --satin: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--wine) 78%, white) 0,
+      color-mix(in srgb, var(--wine) 78%, white) 1px,
+      color-mix(in srgb, var(--wine) 90%, black) 1px,
+      var(--wine) 30%,
+      color-mix(in srgb, var(--wine) 84%, white) 52%,
+      var(--wine) 74%,
+      color-mix(in srgb, var(--wine) 88%, black) calc(100% - 1px),
+      color-mix(in srgb, var(--wine) 84%, white) calc(100% - 1px),
+      color-mix(in srgb, var(--wine) 84%, white) 100%
+    );
+    position: fixed;
+    top: var(--header-h);
+    right: clamp(14px, 3vw, 34px);
+    z-index: var(--z-ribbon);
+    width: var(--ribbon-w);
+    height: 0;
+    pointer-events: none;
+  }
+
+  .ribbon[data-hidden='true'] {
+    display: none;
+  }
+
+  /* The open mobile menu owns the top of the screen. */
+  :global(body:has([data-menu-button][aria-expanded='true'])) .ribbon {
+    visibility: hidden;
+  }
+
+  /* One shadow for the whole cloth, so strap and tail read as one object.
+     Clipped at the top edge: the ribbon is tucked under the header, so its
+     shadow must not spill onto it. */
+  .ribbon-cloth {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    filter: drop-shadow(2px 1px 2.5px rgb(var(--shadow-color) / 0.3));
+    clip-path: inset(0 -40px -100vh -40px);
+  }
+
+  /* The strap: scaled in Y only, so its across-the-width sheen never
+     distorts. */
+  .ribbon-body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    background: var(--satin);
+    transform-origin: top center;
+    transform: scaleY(0.55);
+    will-change: transform;
+  }
+
+  /* Where the ribbon tucks under the header: a short fold shadow. */
+  .ribbon-fold {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 12px;
+    background: linear-gradient(to bottom, rgb(var(--shadow-color) / 0.4), transparent);
+  }
+
+  .ribbon-tail-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--tail-h);
+    transform: translate3d(0, 34px, 0);
+    will-change: transform;
+  }
+
+  .ribbon-tail {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--satin);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 9px), 0 100%);
+    transform-origin: top center;
+    transition: transform 100ms ease-out;
+  }
+
+  /* Feedback on the press itself, not on release. */
+  .ribbon[data-dragging='true'] .ribbon-tail {
+    transform: scale(1.06);
+  }
+
+  .ribbon-handle {
+    position: absolute;
+    top: calc(var(--hit-pad-top) * -1);
+    left: 50%;
+    width: 44px;
+    height: calc(var(--tail-h) + var(--hit-pad-top) + 14px);
+    margin-left: -22px;
+    pointer-events: auto;
+    touch-action: none;
+    cursor: grab;
+    outline: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transform: translate3d(0, 34px, 0);
+    will-change: transform;
+  }
+
+  .ribbon[data-dragging='true'] .ribbon-handle {
+    cursor: grabbing;
+  }
+
+  .ribbon-handle:focus-visible::after {
+    content: '';
+    position: absolute;
+    top: calc(var(--hit-pad-top) - 5px);
+    left: 50%;
+    width: calc(var(--ribbon-w) + 10px);
+    height: calc(var(--tail-h) + 10px);
+    margin-left: calc((var(--ribbon-w) + 10px) / -2);
+    border: 2px solid var(--focus-ring);
+    border-radius: 3px;
+  }
+
+  /* A small paper tag with the position, shown while the ribbon is in hand. */
+  .ribbon-label {
+    position: absolute;
+    top: var(--hit-pad-top);
+    right: calc(50% + var(--ribbon-w) / 2 + 10px);
+    display: flex;
+    align-items: center;
+    height: var(--tail-h);
+    padding: 0 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--eyebrow);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    opacity: 0;
+    transition: opacity var(--dur-quick) var(--ease-out);
+    pointer-events: none;
+  }
+
+  .ribbon[data-label='true'] .ribbon-label {
+    opacity: 1;
+  }
+
+  @media (max-width: 720px) {
+    .ribbon {
+      --ribbon-w: 10px;
+      /* Sits in the page gutter, clear of the text column. */
+      right: 5px;
+    }
+  }
+
+  /* Under a thumb the tag would be covered: lift it above the touch point. */
+  @media (pointer: coarse) {
+    .ribbon-label {
+      top: calc(var(--hit-pad-top) - 40px);
+      right: calc(50% + var(--ribbon-w) / 2 + 6px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ribbon-tail {
+      transition: none;
+    }
+  }
+
+  @media print {
+    .ribbon {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { registerModule } from '@lib/transitions/vt';
+  import { mountRibbon } from '@lib/scroll/ribbon';
+
+  registerModule({
+    init() {
+      const root = document.querySelector<HTMLElement>('[data-ribbon]');
+      if (!root) return;
+      return mountRibbon(root);
+    },
+  });
+</script>

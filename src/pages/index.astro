@@ -1,17 +1,17 @@
 ---
 import { getCollection, render } from 'astro:content';
+import type { ImageMetadata } from 'astro';
 import Page from '../layouts/Page.astro';
-import Orb from '@components/orbs/Orb.astro';
 import SectionHeading from '@components/shared/SectionHeading.astro';
-import EditorialImage from '@components/shared/EditorialImage.astro';
 import WorkRow from '@components/writing/WorkRow.astro';
 import PostCard from '@components/blog/PostCard.astro';
-import SignatureIntro from '@components/intro/SignatureIntro.astro';
-import SignatureSvg from '@components/intro/SignatureSvg.astro';
+import BookIntro from '@components/intro/BookIntro.astro';
+import Ink from '@components/shared/Ink.astro';
+import Print from '@components/shared/Print.astro';
 import { site } from '@data/site';
 import { bio } from '@data/about';
 
-import portrait from '@assets/photos/portrait-about.jpg';
+import headshot from '@assets/photos/portrait-headshot.jpg';
 import coverAscension from '@assets/photos/cover-ascension.jpg';
 import coverICantSee from '@assets/photos/cover-i-cant-see.jpg';
 import coverPanela from '@assets/photos/cover-panela-plantation.jpg';
@@ -27,8 +27,6 @@ const hrefs: Record<string, string> = {
   'panela-plantation': '/writing/short-fiction',
 };
 
-import type { ImageMetadata } from 'astro';
-
 const works = (await getCollection('works', (w) => w.data.featured)).sort(
   (a, b) => a.data.order - b.data.order,
 );
@@ -43,40 +41,43 @@ const latest = posts[0];
 ---
 
 <Page>
-  <SignatureIntro slot="overlay" />
+  <link slot="head" rel="preload" href="/ink/mission.svg" as="image" type="image/svg+xml" />
+  <BookIntro slot="overlay" />
 
   <section class="hero container">
     <div class="hero-text">
-      <p class="eyebrow">{site.role}</p>
-      <h1 class="hero-name" data-signature-home>
-        <span class="visually-hidden">Viviana Acosta</span>
-        <SignatureSvg variant="static" idPrefix="hero" class="hero-signature" />
-      </h1>
-      <p class="tagline t-1">{site.taglineA}</p>
-      <p class="tagline-b eyebrow">{site.taglineB}</p>
-      <button class="replay ui" type="button" data-sig-replay>Replay the signature</button>
-    </div>
-    <div class="hero-orb" aria-hidden="true">
-      <Orb preset="heroAmbient" />
-    </div>
-  </section>
+      <p class="eyebrow" data-hero-reveal>{site.role}</p>
+      <h1 class="hero-name t-6" data-hero-reveal>{site.name}</h1>
 
-  <section class="mission container">
-    <p class="t-5 mission-line">{site.missionHero}</p>
+      <!-- Her mission, in her hand: the line the pen writes in the opening.
+           The h1 above names the page; this is the sentence it exists for. -->
+      <p class="hero-mission">
+        <Ink piece="mission" class="hero-ink" />
+      </p>
+
+      <p class="tagline t-1" data-hero-reveal>{site.taglineA}</p>
+      <p class="tagline-b eyebrow" data-hero-reveal>{site.taglineB}</p>
+      <button class="replay ui" type="button" data-intro-replay data-hero-reveal>
+        Replay the opening
+      </button>
+    </div>
+
+    <div class="hero-portrait" data-hero-reveal>
+      <Print
+        src={headshot}
+        alt="Viviana Acosta, smiling, in a charcoal blazer"
+        rotate={2.2}
+        tape
+        loading="eager"
+        sizes="(max-width: 860px) 70vw, 380px"
+      />
+    </div>
   </section>
 
   <section class="section container intro-row">
-    <div class="intro-portrait">
-      <EditorialImage
-        src={portrait}
-        alt="Viviana Acosta"
-        widths={[400, 700, 1000]}
-        sizes="(max-width: 760px) 80vw, 360px"
-      />
-    </div>
-    <div class="intro-copy">
-      <p class="t-1 prose-width">{bio[0]}</p>
-      <p class="prose-width intro-second">{bio[1]}</p>
+    <p class="t-2 intro-lede">{bio[0]}</p>
+    <div class="intro-rest">
+      <p class="intro-second">{bio[1]}</p>
       <a class="more ui" href="/about">More about Viviana</a>
     </div>
   </section>
@@ -134,32 +135,25 @@ const latest = posts[0];
   .hero {
     position: relative;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
     align-items: center;
-    gap: var(--space-6);
-    padding-block: var(--space-9) var(--space-7);
-    min-height: 52dvh;
+    gap: var(--space-8);
+    padding-block: var(--space-9) var(--space-9);
   }
 
   .hero-name {
-    margin-block: var(--space-5);
-    max-width: 640px;
-    view-transition-name: wordmark;
+    margin-block: var(--space-3) var(--space-5);
+    color: var(--text-1);
   }
 
-  .replay {
-    margin-block-start: var(--space-5);
-    color: var(--text-3);
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: var(--space-2) 0;
-    border-bottom: 1px solid transparent;
-    transition: color var(--dur-quick) var(--ease-out);
+  .hero-mission {
+    margin-block-end: var(--space-6);
   }
 
-  .replay:hover {
-    color: var(--accent);
+  .hero-ink {
+    width: min(36rem, 100%);
+    /* Optical alignment: pull the ink's padding out of the text edge. */
+    margin-inline-start: -0.55rem;
   }
 
   .tagline {
@@ -168,32 +162,41 @@ const latest = posts[0];
 
   .tagline-b {
     margin-block-start: var(--space-3);
-    color: var(--ornament);
   }
 
-  .hero-orb {
-    justify-self: end;
+  .replay {
+    margin-block-start: var(--space-6);
+    color: var(--text-3);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: var(--space-2) 0;
+    transition: color var(--dur-quick) var(--ease-out);
   }
 
-  .mission {
-    padding-block: var(--space-7);
-    border-top: 1px solid var(--line);
+  .replay:hover {
+    color: var(--accent);
   }
 
-  .mission-line {
-    max-width: 24ch;
-    color: var(--text-1);
+  .hero-portrait {
+    justify-self: center;
+    width: min(100%, 23rem);
   }
 
   .intro-row {
     display: grid;
-    grid-template-columns: minmax(0, 360px) 1fr;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
     gap: var(--space-8);
     align-items: start;
+    border-top: 1px solid var(--line);
+    padding-block-start: var(--space-8);
+  }
+
+  .intro-lede {
+    max-width: 34rem;
   }
 
   .intro-second {
-    margin-block-start: var(--space-4);
     color: var(--text-2);
   }
 
@@ -228,32 +231,34 @@ const latest = posts[0];
     .hero {
       grid-template-columns: 1fr;
       min-height: auto;
+      gap: var(--space-7);
+      padding-block: var(--space-7) var(--space-8);
     }
-    .hero-name {
-      max-width: 100%;
+    .hero-ink {
+      margin-inline-start: -0.5rem;
     }
-    .hero-orb {
-      display: none;
+    .hero-portrait {
+      justify-self: start;
+      width: min(78%, 20rem);
+      margin-inline-start: var(--space-3);
     }
     .intro-row {
       grid-template-columns: 1fr;
-    }
-    .intro-portrait {
-      max-width: 20rem;
+      gap: var(--space-5);
     }
   }
 </style>
 
 <script>
   import { registerModule } from '@lib/transitions/vt';
-  import { clearIntroSeen } from '@lib/intro/intro-gate';
+  import { requestReplay } from '@lib/intro/intro-gate';
 
   registerModule({
     init() {
-      const btn = document.querySelector<HTMLButtonElement>('[data-sig-replay]');
+      const btn = document.querySelector<HTMLButtonElement>('[data-intro-replay]');
       if (!btn) return;
       const onClick = () => {
-        clearIntroSeen();
+        requestReplay();
         window.location.reload();
       };
       btn.addEventListener('click', onClick);

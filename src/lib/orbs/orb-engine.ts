@@ -2,8 +2,8 @@
  * Particle dot-sphere orbs, canvas 2D.
  *
  * Geometry recipe ported from `thinking-orbs` by Jakub Antalik
- * (github.com/Jakubantalik/thinking-orbs, MIT license) with a warm-metallic
- * ink treatment for this site. The register's hard rules, kept on purpose:
+ * (github.com/Jakubantalik/thinking-orbs, MIT license), re-inked for this
+ * site as pen stipple: wine dots on paper, blush dots on wine. The register's hard rules, kept on purpose:
  * orthographic projection (no perspective divide), depth carried by dot
  * radius and ink value alone, honest z-sorting, deterministic hash noise,
  * and absolutely no gradients, shadowBlur, glow, or filters per dot.
@@ -21,7 +21,7 @@ export interface Dot {
   /** 0 = nearest/brightest .. 1 = farthest/dimmest (pre-ramp ink value) */
   ink: number;
   a: number;
-  /** copper accent flag, assigned from the stable generation index */
+  /** accent-ink flag, assigned from the stable generation index */
   accent?: boolean;
 }
 
@@ -45,10 +45,13 @@ export interface OrbConfig {
   size: number; // css px (square)
   speed: number;
   count: number; // particle budget hint (mode-dependent meaning)
-  accentRatio: number; // fraction of dots tinted copper
+  accentRatio: number; // fraction of dots in the accent ink
   seed: number;
   edges: boolean; // proximity constellation lines (web mode)
   alphaFloor: number; // raised under prefers-contrast
+  /** Extra rotation from the reader's hand (drag to spin), in radians. */
+  yawOffset: number;
+  tiltOffset: number;
 }
 
 export const defaultConfig: OrbConfig = {
@@ -60,6 +63,8 @@ export const defaultConfig: OrbConfig = {
   seed: 7,
   edges: false,
   alphaFloor: 0,
+  yawOffset: 0,
+  tiltOffset: 0,
 };
 
 /* ------------------------------------------------------------------ */
@@ -149,7 +154,7 @@ function globeFrame(cfg: OrbConfig, t: number): OrbFrame {
   const scale = half * 0.82;
   const yaw = t * 0.5;
   const tilt = 0.4 + 0.06 * Math.sin(t * 0.35);
-  const proj = makeProj(yaw, tilt, half, half, scale);
+  const proj = makeProj(yaw + cfg.yawOffset, tilt + cfg.tiltOffset, half, half, scale);
   const dots: Dot[] = [];
 
   // Lat/long lattice with density-corrected rows.
@@ -183,7 +188,7 @@ function orbitsFrame(cfg: OrbConfig, t: number): OrbFrame {
   const rs = radiusScale(size);
   const half = size / 2;
   const scale = half * 0.8;
-  const proj = makeProj(t * 0.16, 0.35, half, half, scale);
+  const proj = makeProj(t * 0.16 + cfg.yawOffset, 0.35 + cfg.tiltOffset, half, half, scale);
   const dots: Dot[] = [];
   const rings = 10;
   const ghostPer = 36;
@@ -235,7 +240,13 @@ function webFrame(cfg: OrbConfig, t: number): OrbFrame {
   const rs = radiusScale(size);
   const half = size / 2;
   const scale = half * 0.78;
-  const proj = makeProj(t * 0.12, 0.38 + 0.05 * Math.sin(t * 0.3), half, half, scale);
+  const proj = makeProj(
+    t * 0.12 + cfg.yawOffset,
+    0.38 + 0.05 * Math.sin(t * 0.3) + cfg.tiltOffset,
+    half,
+    half,
+    scale,
+  );
   const dots: Dot[] = [];
   const unit: Array<[number, number, number]> = [];
 
@@ -289,7 +300,7 @@ function fibFrame(cfg: OrbConfig, t: number): OrbFrame {
   const { size, count } = cfg;
   const rs = radiusScale(size);
   const half = size / 2;
-  const proj = makeProj(t * 0.4, 0.35, half, half, half * 0.82);
+  const proj = makeProj(t * 0.4 + cfg.yawOffset, 0.35 + cfg.tiltOffset, half, half, half * 0.82);
   const dots: Dot[] = [];
   for (let i = 0; i < count; i++) {
     const [x, y, z] = fibDir(i, count);
@@ -313,22 +324,53 @@ const modes: Record<OrbMode, (cfg: OrbConfig, t: number) => OrbFrame> = {
 };
 
 /* ------------------------------------------------------------------ */
-/* Painter: ink value -> warm two-stop ramp. Matte fills only.         */
+/* Painter: ink value -> two-stop ramp read from the surface the orb   */
+/* sits on (CSS variables), so it is wine stipple on paper and blush   */
+/* stipple on wine. Matte fills only.                                  */
 /* ------------------------------------------------------------------ */
 
-const NEAR = { r: 0xee, g: 0xd9, b: 0xec }; // pale pink lavender
-const FAR = { r: 0x45, g: 0x3d, b: 0x5c }; // dim violet
-const COPPER = { r: 0x8f, g: 0xa3, b: 0xe8 }; // periwinkle accent
+interface RGB {
+  r: number;
+  g: number;
+  b: number;
+}
 
-function inkColor(ink: number, accent: boolean): string {
+interface OrbPalette {
+  near: RGB;
+  far: RGB;
+  accent: RGB;
+}
+
+const FALLBACK: OrbPalette = {
+  near: { r: 74, g: 26, b: 48 },
+  far: { r: 205, g: 170, b: 182 },
+  accent: { r: 168, g: 110, b: 147 },
+};
+
+function readTriplet(style: CSSStyleDeclaration, name: string, fallback: RGB): RGB {
+  const parts = style.getPropertyValue(name).trim().split(/[\s,]+/).map(Number);
+  if (parts.length < 3 || parts.some((n) => Number.isNaN(n))) return fallback;
+  return { r: parts[0]!, g: parts[1]!, b: parts[2]! };
+}
+
+function readPalette(el: Element): OrbPalette {
+  const style = getComputedStyle(el);
+  return {
+    near: readTriplet(style, '--orb-near', FALLBACK.near),
+    far: readTriplet(style, '--orb-far', FALLBACK.far),
+    accent: readTriplet(style, '--orb-accent', FALLBACK.accent),
+  };
+}
+
+function inkColor(p: OrbPalette, ink: number, accent: boolean): string {
   const t = 1 - ink; // 1 near, 0 far
-  let r = FAR.r + (NEAR.r - FAR.r) * t;
-  let g = FAR.g + (NEAR.g - FAR.g) * t;
-  let b = FAR.b + (NEAR.b - FAR.b) * t;
+  let r = p.far.r + (p.near.r - p.far.r) * t;
+  let g = p.far.g + (p.near.g - p.far.g) * t;
+  let b = p.far.b + (p.near.b - p.far.b) * t;
   if (accent) {
-    r = r * 0.35 + COPPER.r * 0.65;
-    g = g * 0.35 + COPPER.g * 0.65;
-    b = b * 0.35 + COPPER.b * 0.65;
+    r = r * 0.35 + p.accent.r * 0.65;
+    g = g * 0.35 + p.accent.g * 0.65;
+    b = b * 0.35 + p.accent.b * 0.65;
   }
   return `rgb(${r | 0} ${g | 0} ${b | 0})`;
 }
@@ -336,6 +378,9 @@ function inkColor(ink: number, accent: boolean): string {
 /* ------------------------------------------------------------------ */
 /* Orb instance                                                        */
 /* ------------------------------------------------------------------ */
+
+/** Keep the poles from flipping over while the reader drags. */
+const clampTilt = (v: number) => Math.max(-1.1, Math.min(1.1, v));
 
 export class Orb {
   private cfg: OrbConfig;
@@ -349,6 +394,12 @@ export class Orb {
   private speedFactor = 1;
   private drawScale = 1;
   private phase: number;
+  private palette: OrbPalette;
+  // Drag-to-spin: the reader's hand adds rotation; a flick keeps coasting.
+  private spinVelocity = 0; // rad/s around the vertical axis
+  private tiltVelocity = 0;
+  private dragging = false;
+  private detachSpin: (() => void) | null = null;
 
   constructor(canvas: HTMLCanvasElement, cfg: Partial<OrbConfig> = {}) {
     this.cfg = { ...defaultConfig, ...cfg };
@@ -357,6 +408,7 @@ export class Orb {
     if (!ctx) throw new Error('canvas 2d context unavailable');
     this.ctx = ctx;
     this.phase = this.cfg.seed * 137.1;
+    this.palette = readPalette(canvas);
     this.raster();
 
     this.speedSpring = new Spring(1, springs.gentle, (v) => {
@@ -395,7 +447,18 @@ export class Orb {
     this.removeTickFn = addTick((now, dt) => {
       // Integrate our own clock so speed springs modulate smoothly.
       void now;
-      this.phase += (dt / 1000) * this.cfg.speed * this.speedFactor;
+      const seconds = dt / 1000;
+      this.phase += seconds * this.cfg.speed * this.speedFactor;
+      if (!this.dragging && (this.spinVelocity !== 0 || this.tiltVelocity !== 0)) {
+        // Coast on the flick, bleeding speed like a globe on a good bearing.
+        this.cfg.yawOffset += this.spinVelocity * seconds;
+        this.cfg.tiltOffset = clampTilt(this.cfg.tiltOffset + this.tiltVelocity * seconds);
+        const decay = Math.exp(-seconds / 1.15);
+        this.spinVelocity *= decay;
+        this.tiltVelocity *= decay;
+        if (Math.abs(this.spinVelocity) < 0.01) this.spinVelocity = 0;
+        if (Math.abs(this.tiltVelocity) < 0.01) this.tiltVelocity = 0;
+      }
       this.draw(this.phase);
     });
   }
@@ -413,8 +476,103 @@ export class Orb {
     this.start();
   }
 
+  /**
+   * Let the reader grab the sphere: drag turns it 1:1 under the pointer,
+   * release hands the pointer's velocity to the spin, which coasts down.
+   */
+  enableSpin(): void {
+    if (this.detachSpin) return;
+    const canvas = this.canvas;
+    let radius = this.cfg.size * 0.41;
+    let lastX = 0;
+    let lastY = 0;
+    let lastT = 0;
+    const samples: Array<{ dx: number; dy: number; dt: number }> = [];
+
+    const down = (e: PointerEvent) => {
+      if (e.button !== 0) return;
+      radius = this.cfg.size * 0.41;
+      this.dragging = true;
+      this.spinVelocity = 0;
+      this.tiltVelocity = 0;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      lastT = performance.now();
+      samples.length = 0;
+      try {
+        canvas.setPointerCapture(e.pointerId);
+      } catch {
+        // the pointer is already gone; the drag ends on the next move
+      }
+      canvas.dataset.grabbing = 'true';
+    };
+    const move = (e: PointerEvent) => {
+      if (!this.dragging) return;
+      // A release we never heard about (a context menu, a lost capture).
+      if (e.buttons === 0) {
+        up();
+        return;
+      }
+      const now = performance.now();
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      // A point on the surface follows the finger: arc length / radius.
+      this.cfg.yawOffset -= dx / radius;
+      this.cfg.tiltOffset = clampTilt(this.cfg.tiltOffset + dy / radius);
+      samples.push({ dx, dy, dt: Math.max(1, now - lastT) });
+      if (samples.length > 6) samples.shift();
+      lastX = e.clientX;
+      lastY = e.clientY;
+      lastT = now;
+      if (prefersReducedMotion()) this.renderStatic();
+    };
+    const up = () => {
+      if (!this.dragging) return;
+      this.dragging = false;
+      delete canvas.dataset.grabbing;
+      if (prefersReducedMotion()) return;
+      // Hand the release velocity to the spin (stale samples mean no flick).
+      if (performance.now() - lastT < 80 && samples.length > 1) {
+        const sum = samples.reduce(
+          (acc, s) => ({ dx: acc.dx + s.dx, dy: acc.dy + s.dy, dt: acc.dt + s.dt }),
+          { dx: 0, dy: 0, dt: 0 },
+        );
+        this.spinVelocity = -((sum.dx / sum.dt) * 1000) / radius;
+        this.tiltVelocity = ((sum.dy / sum.dt) * 1000) / radius;
+      }
+      this.start();
+    };
+    canvas.addEventListener('pointerdown', down);
+    canvas.addEventListener('pointermove', move);
+    canvas.addEventListener('pointerup', up);
+    canvas.addEventListener('pointercancel', up);
+    canvas.addEventListener('lostpointercapture', up);
+    this.detachSpin = () => {
+      canvas.removeEventListener('pointerdown', down);
+      canvas.removeEventListener('pointermove', move);
+      canvas.removeEventListener('pointerup', up);
+      canvas.removeEventListener('pointercancel', up);
+      canvas.removeEventListener('lostpointercapture', up);
+    };
+  }
+
+  /** Nudge the spin from the keyboard (arrow keys on a focused orb). */
+  nudge(yaw: number, tilt: number): void {
+    if (prefersReducedMotion()) {
+      this.cfg.yawOffset += yaw * 0.35;
+      this.cfg.tiltOffset = clampTilt(this.cfg.tiltOffset + tilt * 0.35);
+      this.renderStatic();
+      return;
+    }
+    this.spinVelocity += yaw * 2.2;
+    this.tiltVelocity += tilt * 2.2;
+    this.start();
+  }
+
   destroy(): void {
     this.stopLoop();
+    this.detachSpin?.();
+    this.detachSpin = null;
     this.io?.disconnect();
     this.io = null;
     this.speedSpring.destroy();
@@ -435,6 +593,22 @@ export class Orb {
   /** Single deterministic frame for reduced motion. */
   renderStatic(): void {
     this.draw(0.6 + this.phase * 0.001);
+  }
+
+  /** Change the drawn size (css px). The spin gesture reads it live. */
+  resize(size: number): void {
+    if (size === this.cfg.size) return;
+    this.cfg.size = size;
+    // Re-rastering clears the canvas; draw at once rather than leave it blank
+    // until the next tick (which, during a window resize, never comes first).
+    this.raster();
+    if (prefersReducedMotion() || !this.removeTickFn) this.renderStatic();
+    else this.draw(this.phase);
+  }
+
+  /** Re-read ink colors (the orb moved to a different surface). */
+  refreshPalette(): void {
+    this.palette = readPalette(this.canvas);
   }
 
   private draw(t: number): void {
@@ -459,7 +633,7 @@ export class Orb {
     for (const e of frame.edges) {
       if (e.a < 0.02) continue;
       ctx.globalAlpha = e.a;
-      ctx.strokeStyle = inkColor(0.5, true);
+      ctx.strokeStyle = inkColor(this.palette, 0.5, true);
       ctx.lineWidth = 0.5;
       ctx.beginPath();
       ctx.moveTo(e.x1, e.y1);
@@ -470,7 +644,7 @@ export class Orb {
     for (const d of frame.dots) {
       if (d.a < 0.02) continue;
       ctx.globalAlpha = Math.min(1, d.a);
-      ctx.fillStyle = inkColor(d.ink, d.accent === true);
+      ctx.fillStyle = inkColor(this.palette, d.ink, d.accent === true);
       ctx.beginPath();
       ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
       ctx.fill();

@@ -1,0 +1,546 @@
+---
+/**
+ * The opening: a clothbound book lies on the desk. It opens, a fountain pen
+ * writes Viviana's mission on the first page, the pen flips nib-up and
+ * launches like a rocket, and the camera dives into the page, which becomes
+ * the site.
+ *
+ * The rig is laid out at its FINAL size (the handwriting on the page sits
+ * exactly where the hero's handwriting sits) and the camera starts scaled
+ * down, so everything is crisp and the handoff needs no last-frame jump.
+ * Whether it plays is decided before first paint (see Base.astro).
+ */
+import { site } from '@data/site';
+import { nibRocket } from '@data/brand';
+
+const stamp = nibRocket({ ink: '#f2c9d2', soft: '#b0627f', paper: '#5d2140' });
+const frontis = nibRocket({ ink: '#6e2a48', soft: '#d9a3b4', paper: '#f8f1ec' });
+---
+
+<div
+  class="book-intro"
+  data-book-intro
+  role="dialog"
+  aria-modal="true"
+  aria-label="Opening animation: a pen writes in a book"
+>
+  <div class="bi-desk" aria-hidden="true"></div>
+  <button class="bi-skip ui" type="button" data-bi-skip>Skip</button>
+
+  <div class="bi-camera" data-bi-camera aria-hidden="true">
+    <div class="bi-ground bi-ground-right" data-bi-ground-right></div>
+    <div class="bi-ground bi-ground-left" data-bi-ground-left></div>
+
+    <div class="bi-scene">
+      <div class="bi-book">
+        <div class="bi-board"></div>
+        <div class="bi-spine"></div>
+        <div class="bi-edges"></div>
+        <div class="bi-page">
+          <div class="bi-gutter"></div>
+          <div class="bi-cast" data-bi-cast></div>
+        </div>
+
+        <!-- Last to turn: its back is the frontispiece facing the reader. -->
+        <div class="bi-leaf" data-bi-leaf style="--z: 0.16">
+          <i class="bi-face bi-front"></i>
+          <i class="bi-face bi-back bi-frontis">
+            <svg viewBox="0 0 64 64" set:html={frontis} />
+            <span>{site.role}</span>
+          </i>
+        </div>
+        <div class="bi-leaf" data-bi-leaf style="--z: 0.32">
+          <i class="bi-face bi-front"></i>
+          <i class="bi-face bi-back"></i>
+        </div>
+        <div class="bi-leaf bi-cover" data-bi-leaf style="--z: 0.7">
+          <i class="bi-face bi-front bi-cloth">
+            <span class="bi-frame"></span>
+            <svg class="bi-stamp" viewBox="0 0 64 64" set:html={stamp} />
+            <span class="bi-title">{site.name}</span>
+            <span class="bi-rule"></span>
+            <span class="bi-sub">Engineer on the outside.<br />Writer and artist within.</span>
+          </i>
+          <i class="bi-face bi-back bi-endpaper"></i>
+          <i class="bi-edge"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="bi-curtain" data-bi-curtain></div>
+    <div class="bi-ink" data-bi-ink></div>
+
+    <div class="bi-pen-shadow" data-bi-pen-shadow></div>
+    <div class="bi-pen" data-bi-pen>
+      <svg viewBox="-22 -296 44 300" width="44" height="300">
+        <defs>
+          <linearGradient id="bi-nib" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#c79a84"></stop>
+            <stop offset="0.45" stop-color="#f3d9c9"></stop>
+            <stop offset="1" stop-color="#bd8d77"></stop>
+          </linearGradient>
+          <linearGradient id="bi-barrel" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#5c2140"></stop>
+            <stop offset="0.32" stop-color="#8a3a60"></stop>
+            <stop offset="0.6" stop-color="#6e2a48"></stop>
+            <stop offset="1" stop-color="#4b1933"></stop>
+          </linearGradient>
+          <linearGradient id="bi-grip" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#33101f"></stop>
+            <stop offset="0.35" stop-color="#54203a"></stop>
+            <stop offset="1" stop-color="#2a0c19"></stop>
+          </linearGradient>
+        </defs>
+        <!-- end cap -->
+        <path d="M-10.4 -268 L10.4 -268 C10.4 -281 6 -290 0 -290 C-6 -290 -10.4 -281 -10.4 -268 Z" fill="url(#bi-grip)"></path>
+        <!-- barrel -->
+        <path d="M-11.6 -97 L11.6 -97 L10.6 -263 L-10.6 -263 Z" fill="url(#bi-barrel)"></path>
+        <!-- trim rings -->
+        <rect x="-11" y="-269" width="22" height="6.5" rx="1.2" fill="url(#bi-nib)"></rect>
+        <rect x="-12" y="-98.5" width="24" height="6.5" rx="1.2" fill="url(#bi-nib)"></rect>
+        <!-- grip section -->
+        <path d="M-7.2 -48 L7.2 -48 C9.2 -62 10.8 -78 11.2 -92.5 L-11.2 -92.5 C-10.8 -78 -9.2 -62 -7.2 -48 Z" fill="url(#bi-grip)"></path>
+        <!-- nib -->
+        <path d="M0 0 C3.2 -9 9.8 -22 9.8 -33 C9.8 -39 8.2 -44 7.2 -48.5 L-7.2 -48.5 C-8.2 -44 -9.8 -39 -9.8 -33 C-9.8 -22 -3.2 -9 0 0 Z" fill="url(#bi-nib)"></path>
+        <path d="M0 -3 L0 -26" stroke="#7d4f3e" stroke-width="1" stroke-linecap="round"></path>
+        <circle cx="0" cy="-28.5" r="2.3" fill="#7d4f3e"></circle>
+      </svg>
+    </div>
+
+    <div class="bi-puff" data-bi-puff>
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Hidden unless the head script asked for the intro. */
+  .book-intro {
+    display: none;
+  }
+
+  :global(html.intro-on) .book-intro {
+    display: block;
+  }
+
+  /* While the intro plays, the hero waits to make its entrance. */
+  :global(html.intro-on [data-hero-reveal]) {
+    visibility: hidden;
+  }
+
+  :global(html.intro-on) {
+    overflow: hidden;
+  }
+
+  .book-intro {
+    /* Geometry is set from script once the hero has been measured. */
+    --page-w: 600px;
+    --page-h: 828px;
+    --page-x: 50vw;
+    --page-y: 10vh;
+    --u: calc(var(--page-w) / 100);
+    --book-cloth: #5d2140;
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-intro);
+    overflow: hidden;
+    contain: strict;
+  }
+
+  /* The desk: a darker blush than the page, under soft watercolor. */
+  .bi-desk {
+    position: absolute;
+    inset: 0;
+    background-color: #ead6d2;
+    background-image: image-set(
+      url('/washes/wash-hero.webp') type('image/webp'),
+      url('/washes/wash-hero.jpg') type('image/jpeg')
+    );
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: multiply;
+  }
+
+  .bi-skip {
+    position: absolute;
+    top: var(--space-5);
+    right: var(--space-6);
+    z-index: 5;
+    color: var(--text-2);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: rgb(248 241 236 / 0.5);
+    transition: transform 100ms ease-out;
+  }
+
+  .bi-skip:active {
+    transform: scale(0.96);
+  }
+
+  .bi-skip:focus-visible {
+    outline-offset: 2px;
+    border-radius: 999px;
+  }
+
+  .bi-skip:hover {
+    color: var(--text-1);
+  }
+
+  /* 2D camera. No will-change: the browser must be free to re-raster. */
+  .bi-camera {
+    position: absolute;
+    inset: 0;
+    transform-origin: 0 0;
+    visibility: hidden; /* shown by script once geometry is known */
+  }
+
+  /* Soft contact shadows on the desk (2D, outside the 3D rig). */
+  .bi-ground {
+    position: absolute;
+    top: calc(var(--page-y) - var(--u) * 1.2);
+    height: calc(var(--page-h) + var(--u) * 3.6);
+    width: calc(var(--page-w) + var(--u) * 2.6);
+    border-radius: calc(var(--u) * 1);
+    box-shadow:
+      0 calc(var(--u) * 1) calc(var(--u) * 2) rgb(var(--shadow-color) / 0.16),
+      0 calc(var(--u) * 5) calc(var(--u) * 9) rgb(var(--shadow-color) / 0.2),
+      0 calc(var(--u) * 12) calc(var(--u) * 20) rgb(var(--shadow-color) / 0.16);
+  }
+
+  .bi-ground-right {
+    left: var(--page-x);
+  }
+
+  .bi-ground-left {
+    left: calc(var(--page-x) - var(--page-w) - var(--u) * 2.6);
+    opacity: 0;
+    transform-origin: 100% 50%;
+  }
+
+  /* The 3D rig. Perspective lives here; the eye sits above the spine so a
+     leaf's faces swap at exactly 90 degrees. */
+  .bi-scene {
+    position: absolute;
+    left: var(--page-x);
+    top: var(--page-y);
+    width: var(--page-w);
+    height: var(--page-h);
+    perspective: calc(var(--page-w) * 6);
+    perspective-origin: 0 50%;
+  }
+
+  .bi-book {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+  }
+
+  /* Back board and spine: the hardcover under everything. */
+  .bi-board {
+    position: absolute;
+    inset: calc(var(--u) * -1.2) calc(var(--u) * -2.6) calc(var(--u) * -2.4) 0;
+    background: var(--book-cloth);
+    border-radius: 0 calc(var(--u) * 0.9) calc(var(--u) * 0.9) 0;
+    transform: translateZ(calc(var(--u) * -0.3));
+  }
+
+  .bi-spine {
+    position: absolute;
+    top: calc(var(--u) * -1.2);
+    bottom: calc(var(--u) * -2.4);
+    left: calc(var(--u) * -1.1);
+    width: calc(var(--u) * 2.2);
+    background: #4b1933;
+    border-radius: calc(var(--u) * 0.6);
+    transform: translateZ(calc(var(--u) * -0.2));
+  }
+
+  /* The text block's edge: a stack of pages seen from above. */
+  .bi-edges {
+    position: absolute;
+    inset: calc(var(--u) * 0.5) calc(var(--u) * -1.5) calc(var(--u) * -1.3) 0;
+    border-radius: 0 calc(var(--u) * 0.5) calc(var(--u) * 0.5) 0;
+    background-color: #efe3dd;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgb(110 42 72 / 0.11) 0 1px,
+      transparent 1px calc(var(--u) * 0.38)
+    );
+    transform: translateZ(calc(var(--u) * -0.1));
+  }
+
+  /* The writing page. Same paper as the site: it becomes the site. */
+  .bi-page {
+    position: absolute;
+    inset: 0;
+    background: var(--ground);
+    border-radius: 0 calc(var(--u) * 0.4) calc(var(--u) * 0.4) 0;
+  }
+
+  .bi-gutter {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 16%;
+    background: linear-gradient(to right, rgb(var(--shadow-color) / 0.2), transparent);
+  }
+
+  /* Shadow a turning leaf throws onto the page beneath it. */
+  .bi-cast {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgb(var(--shadow-color) / 0.34), transparent 70%);
+    opacity: 0;
+  }
+
+  /* A leaf turns about the spine. Stack height (--z) is applied after the
+     rotation so the order reverses itself on the left-hand stack. */
+  .bi-leaf {
+    --angle: 0deg;
+    --shade: 0;
+    position: absolute;
+    inset: 0;
+    transform-origin: 0 50%;
+    transform-style: preserve-3d;
+    transform: rotateY(var(--angle)) translateZ(calc(var(--u) * var(--z)))
+      skewY(calc(var(--shade) * -1.2deg));
+  }
+
+  .bi-face {
+    position: absolute;
+    inset: 0;
+    display: block;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    outline: 1px solid transparent; /* smooths rotated edges */
+    background: var(--ground);
+    border-radius: 0 calc(var(--u) * 0.4) calc(var(--u) * 0.4) 0;
+    overflow: hidden;
+  }
+
+  .bi-back {
+    transform: rotateY(180deg);
+    border-radius: calc(var(--u) * 0.4) 0 0 calc(var(--u) * 0.4);
+  }
+
+  /* Belt and braces for engines that mis-sort faces on first paint. */
+  .bi-leaf:not([data-flipped]) > .bi-back,
+  .bi-leaf[data-flipped] > .bi-front {
+    visibility: hidden;
+  }
+
+  /* Light falls from the upper left: a lifting leaf darkens toward its
+     free edge; its back lightens as it lands. */
+  .bi-face::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: var(--shade);
+    background: linear-gradient(
+      to right,
+      rgb(var(--shadow-color) / 0.03),
+      rgb(var(--shadow-color) / 0.18) 55%,
+      rgb(var(--shadow-color) / 0.28)
+    );
+  }
+
+  .bi-back::after {
+    background: linear-gradient(
+      to left,
+      rgb(var(--shadow-color) / 0.06),
+      rgb(var(--shadow-color) / 0.24)
+    );
+  }
+
+  /* Left-hand pages keep a gutter shadow once they have landed. */
+  .bi-back::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: 16%;
+    background: linear-gradient(to left, rgb(var(--shadow-color) / 0.18), transparent);
+  }
+
+  .bi-frontis {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--u) * 4);
+    font-style: normal;
+  }
+
+  .bi-frontis svg {
+    width: calc(var(--u) * 26);
+    height: calc(var(--u) * 26);
+  }
+
+  .bi-frontis span {
+    font-family: var(--font-mono);
+    font-size: calc(var(--u) * 2.1);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8b4a6b;
+  }
+
+  /* The cover: a board with thickness, larger than the pages. */
+  .bi-cover {
+    inset: calc(var(--u) * -1.2) calc(var(--u) * -2.6) calc(var(--u) * -2.4) 0;
+  }
+
+  .bi-cover > .bi-front {
+    transform: translateZ(calc(var(--u) * 0.3));
+    border-radius: 0 calc(var(--u) * 0.9) calc(var(--u) * 0.9) 0;
+  }
+
+  .bi-cover > .bi-back {
+    transform: rotateY(180deg) translateZ(calc(var(--u) * 0.3));
+    border-radius: calc(var(--u) * 0.9) 0 0 calc(var(--u) * 0.9);
+  }
+
+  .bi-edge {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 100%;
+    width: calc(var(--u) * 0.6);
+    background: #4b1933;
+    transform-origin: 0 50%;
+    transform: translateZ(calc(var(--u) * 0.3)) rotateY(90deg);
+  }
+
+  /* Book cloth: a woven texture over wine. */
+  .bi-cloth {
+    background-color: var(--book-cloth);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9 0.35' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 0.9  0 0 0 0 0.94  0 0 0 0.22 -0.04'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--u) * 3.2);
+    text-align: center;
+    font-style: normal;
+    color: #f2c9d2;
+  }
+
+  .bi-frame {
+    position: absolute;
+    inset: calc(var(--u) * 5);
+    border: calc(var(--u) * 0.22) solid rgb(242 201 210 / 0.55);
+    border-radius: calc(var(--u) * 0.6);
+  }
+
+  .bi-stamp {
+    width: calc(var(--u) * 26);
+    height: calc(var(--u) * 26);
+  }
+
+  .bi-title {
+    font-family: var(--font-display);
+    font-variation-settings: 'SOFT' 30, 'WONK' 0;
+    font-weight: 430;
+    font-size: calc(var(--u) * 10.4);
+    line-height: 1;
+    letter-spacing: -0.015em;
+    text-shadow: 0 calc(var(--u) * 0.12) 0 rgb(0 0 0 / 0.28);
+  }
+
+  .bi-rule {
+    width: calc(var(--u) * 14);
+    height: calc(var(--u) * 0.22);
+    background: rgb(242 201 210 / 0.6);
+  }
+
+  .bi-sub {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-variation-settings: 'SOFT' 30, 'WONK' 1;
+    font-size: calc(var(--u) * 3.5);
+    line-height: 1.4;
+    color: rgb(242 201 210 / 0.86);
+  }
+
+  /* Marbled endpapers in her colors. */
+  .bi-endpaper {
+    background-color: #f1dcd9;
+    background-image: image-set(
+      url('/washes/wash-hero.webp') type('image/webp'),
+      url('/washes/wash-hero.jpg') type('image/jpeg')
+    );
+    background-size: 220% auto;
+    background-position: 30% 40%;
+    background-blend-mode: multiply;
+  }
+
+  /* Paper that swallows the desk as the camera dives into the page. */
+  .bi-curtain {
+    position: absolute;
+    inset: -300vmax;
+    background: var(--ground);
+    opacity: 0;
+  }
+
+  /* The live handwriting. At camera identity this box is exactly the
+     hero's handwriting box. */
+  .bi-ink {
+    position: absolute;
+  }
+
+  .bi-pen,
+  .bi-pen-shadow {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: 0 0;
+    opacity: 0;
+  }
+
+  .bi-pen svg {
+    display: block;
+    /* The svg's own origin (the nib tip) sits at the element's origin. */
+    transform: translate(-22px, -296px);
+    overflow: visible;
+  }
+
+  .bi-pen-shadow {
+    width: 20px;
+    height: 286px;
+    border-radius: 10px;
+    background: rgb(var(--shadow-color) / 0.5);
+    filter: blur(7px);
+  }
+
+  .bi-puff {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .bi-puff i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(var(--u) * 7);
+    height: calc(var(--u) * 7);
+    margin: calc(var(--u) * -3.5) 0 0 calc(var(--u) * -3.5);
+    border-radius: 50%;
+    background: #f1d3da;
+    opacity: 0;
+  }
+
+  .bi-puff i:nth-child(3n) {
+    background: #e4b8c4;
+  }
+
+  .bi-puff i:nth-child(3n + 1) {
+    background: #fbeef0;
+  }
+</style>
+
+<script>
+  import '@lib/intro/book-intro';
+</script>

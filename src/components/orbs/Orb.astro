@@ -1,22 +1,55 @@
 ---
-import type { OrbPresetName } from '@lib/orbs/orb-presets';
+import { presetSize, type OrbPresetName } from '@lib/orbs/orb-presets';
 
 interface Props {
   preset: OrbPresetName;
   size?: number;
+  /** Take the size from the parent's width (and follow it when it changes). */
+  fit?: boolean;
+  /** Let the reader grab and spin it (drag, flick, or arrow keys). */
+  spin?: boolean;
+  /** Accessible name when interactive. */
+  label?: string;
   class?: string;
 }
-const { preset, size, class: className } = Astro.props;
+const {
+  preset,
+  size,
+  fit = false,
+  spin = false,
+  label = 'A dotted planet. Drag to spin it, or use the arrow keys.',
+  class: className,
+  ...rest
+} = Astro.props;
+// A canvas is 300 x 150 until something sizes it. Give it its real box in the
+// markup, so nothing on the page moves when the engine starts drawing.
+const box = size ?? presetSize(preset);
 ---
 
 <canvas
-  class:list={['orb', className]}
+  class:list={['orb', className, { 'orb-spin': spin }]}
   data-orb={preset}
+  {...fit ? {} : { width: box, height: box, style: `width:${box}px;height:${box}px` }}
   {...size ? { 'data-orb-size': String(size) } : {}}
-  aria-hidden="true"></canvas>
+  {...fit ? { 'data-orb-fit': '' } : {}}
+  {...spin
+    ? { 'data-orb-spin': '', tabindex: '0', role: 'img', 'aria-label': label }
+    : { 'aria-hidden': 'true' }}
+  {...rest}></canvas>
 
 <style>
   .orb {
     display: block;
+  }
+
+  .orb-spin {
+    cursor: grab;
+    /* Vertical swipes still scroll the page; sideways drags spin. */
+    touch-action: pan-y;
+    border-radius: 50%;
+  }
+
+  .orb-spin[data-grabbing] {
+    cursor: grabbing;
   }
 </style>

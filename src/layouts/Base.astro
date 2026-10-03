@@ -6,6 +6,7 @@ import '@styles/base.css';
 import '@styles/typography.css';
 import '@styles/utilities.css';
 import '@styles/prose.css';
+import '@styles/transitions.css';
 
 interface Props {
   title?: string;
@@ -31,9 +32,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#f8f1ec" />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link
       rel="preload"
@@ -55,16 +58,42 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:site_name" content={site.name} />
     {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
     <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <!-- The book intro decides before first paint, so the home page never
+         flashes ahead of its cover. It plays when the home page is where a
+         session begins (or on an explicit replay), and never under reduced
+         motion. No script, no intro: the site is simply there. -->
+    <script is:inline>
+      (function () {
+        try {
+          var s = window.sessionStorage;
+          var replay = s.getItem('viv:intro:replay') === '1';
+          var fresh = s.getItem('viv:intro:v2') === null;
+          var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          var home = location.pathname === '/' || location.pathname === '';
+          if (home && !calm && (fresh || replay)) {
+            document.documentElement.classList.add('intro-on');
+            // Failsafe: if the intro script never starts, show the site.
+            setTimeout(function () {
+              if (!window.__vivIntroStarted) document.documentElement.classList.remove('intro-on');
+            }, 5000);
+          }
+          s.removeItem('viv:intro:replay');
+          s.setItem('viv:intro:v2', '1');
+        } catch (e) {}
+      })();
+    </script>
+    <slot name="head" />
     <ClientRouter />
   </head>
   <body>
-    <div class="cloud-layer" aria-hidden="true"></div>
+    <div class="wash-layer" aria-hidden="true"></div>
     <a class="skip-link ui" href="#main">Skip to content</a>
     <slot />
     <script>
       import { reflectClasses } from '@lib/motion/prefs';
       import '@lib/site/orb-mounts';
       import '@lib/scroll/choreography';
+      import '@lib/ink/reveal';
       reflectClasses();
     </script>
   </body>
@@ -76,7 +105,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     top: 0.75rem;
     left: 0.75rem;
     z-index: var(--z-skiplink);
-    background: var(--ink-800);
+    background: var(--surface-2);
     color: var(--text-1);
     padding: 0.6rem 1rem;
     border-radius: 4px;

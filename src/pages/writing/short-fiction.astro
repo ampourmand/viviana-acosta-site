@@ -84,6 +84,7 @@ const rendered = await Promise.all(pieces.map(async (work) => ({ work, r: await 
   .piece-cover {
     border-radius: 4px;
     overflow: hidden;
+    box-shadow: var(--shadow-rest);
   }
 
   @media (max-width: 860px) {

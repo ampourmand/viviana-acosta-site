@@ -1,0 +1,112 @@
+---
+/**
+ * Temporary lab page for the photo stack. Not linked from the site;
+ * remove once the stack is mounted on the About page.
+ */
+import Page from '../../layouts/Page.astro';
+import PhotoStack from '@components/about/PhotoStack.astro';
+
+import pens from '@assets/photos/photo-leuchtturm-pens.jpg';
+import liberty from '@assets/photos/photo-stationery-liberty.jpg';
+import hallway from '@assets/photos/photo-husky-hallway.jpg';
+import hike from '@assets/photos/photo-desert-hike-1.jpg';
+import overlook from '@assets/photos/photo-smokies-1.jpg';
+import howl from '@assets/photos/photo-husky-howl.jpg';
+
+const photos = [
+  {
+    src: pens,
+    alt: 'Viviana and a girl, each holding a giant pen, in front of an oversized open notebook at the Leuchtturm1917 booth',
+    caption: 'Giant pens at the Leuchtturm1917 booth',
+  },
+  {
+    src: liberty,
+    alt: 'Viviana standing beside a painted Statue of Liberty that holds a pencil in place of a torch',
+    caption: 'Stationery Fest 2026, Brooklyn',
+  },
+  {
+    src: hallway,
+    alt: 'A gray and white husky with pale blue eyes sitting in a hallway',
+    caption: 'The family husky',
+  },
+  {
+    src: hike,
+    alt: 'Viviana smiling in a headband and glasses on a desert trail, saguaro cactus on the hillside behind her',
+    caption: 'Trail day among the saguaros',
+  },
+  {
+    src: overlook,
+    alt: 'Viviana in mirrored sunglasses at a wooden fence, mountains and a sky full of clouds behind her',
+    caption: 'Mountain overlook',
+  },
+  {
+    src: howl,
+    alt: 'The husky lying on a rug with head thrown back, howling',
+    caption: 'Mid-howl',
+  },
+];
+---
+
+<Page title="Photo stack lab" description="Lab page for the photo stack." noindex>
+  <section class="section container">
+    <p class="eyebrow">Lab</p>
+    <h1 class="t-4">Photo stack</h1>
+    <p class="note prose-width">
+      Drag the top print. Flick it and it sails off and tucks to the back of the pile. Tap, arrow
+      keys, and the buttons do the same.
+    </p>
+
+    <PhotoStack photos={photos} label="Photos from off the page" />
+
+    <div class="notes prose-width">
+      <h2 class="t-2">What to try</h2>
+      <ul>
+        <li>A slow drag and release brings the print home.</li>
+        <li>A quick flick sends it to the back, in whichever direction you threw it.</li>
+        <li>Catch a print in mid flight and it stays in your hand.</li>
+        <li>On a touch screen, a vertical swipe over the pile still scrolls the page.</li>
+        <li>With reduced motion turned on, the order changes with a short crossfade.</li>
+      </ul>
+      <p>
+        Leave the page and come back to check that nothing doubles up:
+        <a href="/about">About</a>.
+      </p>
+      <p class="spacer">The rest of this page is only here so there is something to scroll.</p>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .note {
+    color: var(--text-2);
+    margin-block: var(--space-4) var(--space-6);
+  }
+
+  .notes {
+    margin-block-start: var(--space-8);
+    color: var(--text-2);
+  }
+
+  .notes h2 {
+    color: var(--text-1);
+    margin-block-end: var(--space-4);
+  }
+
+  .notes ul {
+    padding-inline-start: 1.2em;
+    margin-block-end: var(--space-5);
+  }
+
+  .notes li + li {
+    margin-block-start: var(--space-2);
+  }
+
+  .notes a {
+    color: var(--accent);
+  }
+
+  .spacer {
+    margin-block-start: var(--space-5);
+    padding-block-end: 70vh;
+  }
+</style>

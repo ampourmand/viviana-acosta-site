@@ -1,0 +1,143 @@
+---
+/**
+ * TEMPORARY lab page for the guestbook ink pad. Not linked from the site;
+ * delete once the pad is mounted in the contact form.
+ */
+import Page from '../../layouts/Page.astro';
+import GuestbookPad from '@components/contact/GuestbookPad.astro';
+---
+
+<Page title="Guestbook lab" noindex>
+  <section class="section container lab">
+    <p class="eyebrow">Lab</p>
+    <h1 class="t-4">Guestbook ink pad</h1>
+    <p class="lede">
+      Draw on the page, then submit. The form never leaves this page: it prints what the hidden
+      field would send. <a href="/about">Leave for About</a> and come back to test navigation.
+    </p>
+
+    <form class="lab-form" data-lab-form>
+      <label class="lab-field ui">
+        <span>Message</span>
+        <input type="text" name="message" autocomplete="off" />
+      </label>
+
+      <GuestbookPad />
+
+      <div class="lab-actions ui">
+        <button type="submit" class="lab-submit">Submit</button>
+        <button type="reset" class="lab-reset">Reset form</button>
+      </div>
+    </form>
+
+    <p class="eyebrow lab-out-label">Hidden field</p>
+    <pre class="lab-out" data-lab-out>Nothing submitted yet.</pre>
+    <p class="eyebrow lab-out-label">Rendered from the field</p>
+    <img class="lab-echo" data-lab-echo alt="The drawing, rendered from the serialized field" hidden />
+  </section>
+</Page>
+
+<style>
+  .lab {
+    max-width: 44rem;
+  }
+
+  .lede {
+    margin-block: var(--space-4) var(--space-6);
+    color: var(--text-2);
+  }
+
+  .lede a {
+    color: var(--accent);
+  }
+
+  .lab-form {
+    display: grid;
+    gap: var(--space-5);
+    max-width: 34rem;
+  }
+
+  .lab-field {
+    display: grid;
+    gap: var(--space-2);
+    font-size: 0.9rem;
+    color: var(--text-2);
+  }
+
+  .lab-field input {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0.65rem 0.9rem;
+    color: var(--text-1);
+  }
+
+  .lab-actions {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  .lab-submit {
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    color: var(--accent);
+    padding: 0.6rem 1.6rem;
+  }
+
+  .lab-reset {
+    color: var(--text-2);
+    font-size: 0.9rem;
+  }
+
+  .lab-out-label {
+    margin-block: var(--space-6) var(--space-2);
+  }
+
+  .lab-out {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--text-2);
+    background: var(--surface-1);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: var(--space-4);
+  }
+
+  .lab-echo {
+    width: 100%;
+    max-width: 34rem;
+    aspect-ratio: 600 / 320;
+    background: var(--paper-print);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+</style>
+
+<script>
+  import { registerModule } from '@lib/transitions/vt';
+
+  registerModule({
+    init() {
+      const form = document.querySelector<HTMLFormElement>('[data-lab-form]');
+      const out = document.querySelector<HTMLElement>('[data-lab-out]');
+      const echo = document.querySelector<HTMLImageElement>('[data-lab-echo]');
+      if (!form || !out) return;
+
+      const onSubmit = (e: SubmitEvent) => {
+        e.preventDefault();
+        const value = String(new FormData(form).get('guestbook-ink') ?? '');
+        out.textContent = `length: ${value.length}\n${value.slice(0, 200)}`;
+        if (echo) {
+          echo.hidden = value.length === 0;
+          if (value) echo.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(value)}`;
+        }
+      };
+      form.addEventListener('submit', onSubmit);
+      return () => form.removeEventListener('submit', onSubmit);
+    },
+  });
+</script>

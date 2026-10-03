@@ -47,8 +47,8 @@
 
 /* ---------------------------------------------------------------------------
    Paired type scale: size, leading, and tracking travel together so they can
-   never drift apart. Large sizes tighten; small sizes loosen (dark ground
-   halation is already accounted for: everything runs a notch lighter/looser).
+   never drift apart. Large sizes tighten; small sizes loosen. Weights are
+   tuned for wine ink on blush paper.
 --------------------------------------------------------------------------- */
 .t--1 { font-size: 0.833rem; line-height: 1.55; letter-spacing: 0.01em; }
 .t-0  { font-size: 1.0625rem; line-height: 1.6;  letter-spacing: 0.005em; }
@@ -62,16 +62,16 @@
 /* Display voice: sharp (SOFT 0), composed (WONK 0). */
 .t-2, .t-3, .t-4, .t-5, .t-6 {
   font-family: var(--font-display);
-  font-weight: 370;
-  font-variation-settings: 'SOFT' 0, 'WONK' 0;
+  font-weight: 410;
+  font-variation-settings: 'SOFT' 30, 'WONK' 0;
 }
 
 /* The authorial hand: italic pull quotes get the wonky alternates. */
 .t-hand {
   font-family: var(--font-display);
   font-style: italic;
-  font-weight: 390;
-  font-variation-settings: 'SOFT' 0, 'WONK' 1;
+  font-weight: 420;
+  font-variation-settings: 'SOFT' 30, 'WONK' 1;
 }
 
 /* Eyebrow: small metadata labels, gallery-placard voice. */
@@ -81,8 +81,7 @@
   line-height: 1.4;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
-  opacity: 0.85;
+  color: var(--eyebrow);
 }
 
 .ui {

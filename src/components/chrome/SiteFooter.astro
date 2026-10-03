@@ -2,10 +2,20 @@
 import { site } from '@data/site';
 import NewsletterForm from '@components/contact/NewsletterForm.astro';
 import SocialLinks from '@components/shared/SocialLinks.astro';
+import Ink from '@components/shared/Ink.astro';
+import Logo from '@components/shared/Logo.astro';
 const year = new Date().getFullYear();
 ---
 
-<footer class="site-footer">
+<footer class="site-footer surface-wine">
+  <div class="footer-sky" aria-hidden="true"></div>
+
+  <div class="container footer-mission">
+    <Logo size={54} cloud />
+    <!-- Her footer line, in her hand. The pen writes it when you arrive. -->
+    <Ink piece="mission-footer" write="view" class="mission-ink" />
+  </div>
+
   <div class="container footer-grid">
     <div class="footer-signup">
       <p class="signup-prompt">{site.newsletterPrompt}</p>
@@ -22,17 +32,46 @@ const year = new Date().getFullYear();
   </div>
 
   <div class="container footer-close">
-    <p class="mission t-hand">{site.missionFooter}</p>
     <p class="colophon ui">&copy; {year} Viviana Acosta</p>
   </div>
 </footer>
 
 <style>
   .site-footer {
+    position: relative;
+    z-index: var(--z-base);
     margin-block-start: var(--space-10);
-    border-top: 1px solid var(--line);
-    background: var(--ink-well);
-    padding-block: var(--space-8) var(--space-6);
+    padding-block: var(--space-9) var(--space-6);
+    overflow: clip;
+  }
+
+  /* A wine night sky: rose clouds and a few stars, drifting very slowly. */
+  .footer-sky {
+    position: absolute;
+    inset: -6%;
+    background-image: image-set(
+      url('/washes/wash-wine.webp') type('image/webp'),
+      url('/washes/wash-wine.jpg') type('image/jpeg')
+    );
+    background-size: cover;
+    background-position: center;
+    opacity: 0.9;
+  }
+
+  .site-footer > .container {
+    position: relative;
+  }
+
+  .footer-mission {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+    margin-block-end: var(--space-8);
+  }
+
+  .mission-ink {
+    width: min(34rem, 100%);
   }
 
   .footer-grid {
@@ -40,7 +79,9 @@ const year = new Date().getFullYear();
     flex-wrap: wrap;
     justify-content: space-between;
     gap: var(--space-7);
-    align-items: flex-start;
+    align-items: flex-end;
+    padding-block-start: var(--space-7);
+    border-top: 1px solid var(--line);
   }
 
   .footer-signup {
@@ -75,17 +116,7 @@ const year = new Date().getFullYear();
   }
 
   .footer-close {
-    margin-block-start: var(--space-8);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-4);
-  }
-
-  .mission {
-    font-size: 1.25rem;
-    color: var(--text-2);
+    margin-block-start: var(--space-7);
   }
 
   .colophon {

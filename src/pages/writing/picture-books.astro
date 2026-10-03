@@ -76,6 +76,7 @@ const rendered = await Promise.all(books.map(async (work) => ({ work, r: await r
   .book-cover {
     border-radius: 4px;
     overflow: hidden;
+    box-shadow: var(--shadow-rest);
   }
 
   @media (max-width: 860px) {

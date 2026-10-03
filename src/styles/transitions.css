@@ -1,0 +1,69 @@
+/* ---------------------------------------------------------------------------
+   Page turn. Navigating the site turns a leaf: the page you are leaving
+   swings away around its left edge (the spine) while the next page waits
+   beneath, lifting out of the leaf's shadow. Going back turns the leaf the
+   other way.
+
+   Global and unlayered on purpose: these target the root snapshots that the
+   View Transitions API captures (Astro's ClientRouter uses the native API
+   where it exists; older browsers simply swap).
+--------------------------------------------------------------------------- */
+@keyframes leaf-turn-away {
+  from {
+    transform: perspective(600vw) rotateY(0deg);
+    filter: brightness(1);
+  }
+  to {
+    transform: perspective(600vw) rotateY(-88deg);
+    filter: brightness(0.86);
+  }
+}
+
+@keyframes page-under-lift {
+  from {
+    filter: brightness(0.93);
+  }
+  to {
+    filter: brightness(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    mix-blend-mode: normal;
+    transform-origin: 0 50%;
+  }
+
+  ::view-transition-old(root) {
+    z-index: 2;
+    box-shadow: 0 0 5vw rgb(62 21 40 / 0.22);
+    animation: leaf-turn-away 520ms cubic-bezier(0.45, 0, 0.55, 1) both;
+  }
+
+  ::view-transition-new(root) {
+    z-index: 1;
+    animation: page-under-lift 520ms ease-out both;
+  }
+
+  /* Back: the leaf you turned comes back over the page. */
+  html[data-astro-transition='back']::view-transition-new(root) {
+    z-index: 2;
+    box-shadow: 0 0 5vw rgb(62 21 40 / 0.22);
+    animation: leaf-turn-away 520ms cubic-bezier(0.45, 0, 0.55, 1) reverse both;
+  }
+
+  html[data-astro-transition='back']::view-transition-old(root) {
+    z-index: 1;
+    box-shadow: none;
+    animation: page-under-lift 520ms ease-in reverse both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

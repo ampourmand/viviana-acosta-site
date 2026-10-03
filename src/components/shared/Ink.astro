@@ -1,0 +1,87 @@
+---
+/**
+ * A line in Viviana's hand.
+ *
+ * Static state: the finished ink as a CSS mask over a block of pen-ink
+ * color, so it costs no HTML, caches across pages, and re-colors itself on
+ * wine surfaces. With `write="view"` the pen writes it the first time it
+ * scrolls into view (lib/ink/reveal.ts); reduced motion and no-JS keep the
+ * finished line.
+ */
+import index from '../../assets/ink/index.json';
+
+type PieceId = keyof typeof index;
+
+interface Props {
+  piece: PieceId;
+  /** 'view' = write when scrolled into view; 'none' = always finished. */
+  write?: 'view' | 'none';
+  /** Decorative lines repeat nearby text and stay out of the a11y tree. */
+  decorative?: boolean;
+  class?: string;
+}
+
+// `rest` carries the parent's style-scope attribute so a parent can size us.
+const { piece, write = 'none', decorative = false, class: className, ...rest } = Astro.props;
+const meta = index[piece];
+const [, , w, h] = meta.viewBox as [number, number, number, number];
+---
+
+<span
+  class:list={['ink', className]}
+  data-ink={piece}
+  data-ink-write={write}
+  style={`--ink-ratio:${w} / ${h};--ink-src:url('/ink/${piece}.svg')`}
+  {...decorative ? { 'aria-hidden': 'true' } : { role: 'img', 'aria-label': meta.text }}
+  {...rest}></span>
+
+<style is:global>
+  .ink {
+    display: block;
+    position: relative;
+    aspect-ratio: var(--ink-ratio);
+    background-color: var(--pen-ink);
+    -webkit-mask: var(--ink-src) center / contain no-repeat;
+    mask: var(--ink-src) center / contain no-repeat;
+  }
+
+  /* The live pen has taken over: the mask steps aside for real strokes. */
+  .ink.is-live {
+    background-color: transparent;
+    -webkit-mask: none;
+    mask: none;
+  }
+
+  /* Waiting off-screen to be written. Only ever set by script. */
+  .ink.is-pending {
+    opacity: 0;
+  }
+
+  .ink-live {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .ink-stroke {
+    fill: var(--pen-ink);
+  }
+
+  /* Fresh ink is darker and glossier; it dries a moment after the pen
+     moves on. */
+  .ink-stroke.is-wet {
+    fill: var(--pen-ink-wet);
+  }
+
+  .ink-stroke.is-dry {
+    transition: fill 1100ms ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ink-stroke.is-dry {
+      transition: none;
+    }
+  }
+</style>

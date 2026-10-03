@@ -1,7 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#151021"/>
-  <!-- fountain pen nib, gold -->
-  <path d="M32 10c7 7.5 11.5 15 11.5 22.5 0 4.6-1.9 9.3-4.6 13.2L34 41.2a3.4 3.4 0 1 0-4 0l-4.9 4.5c-2.7-3.9-4.6-8.6-4.6-13.2C20.5 25 25 17.5 32 10Z" fill="none" stroke="#d9a2c9" stroke-width="2.6" stroke-linejoin="round"/>
-  <path d="M32 34v-12" stroke="#d9a2c9" stroke-width="2.2" stroke-linecap="round"/>
-  <path d="M27.5 48.5 32 53l4.5-4.5" fill="none" stroke="#d9a2c9" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><rect width="64" height="64" rx="14" fill="#3e1528"/><g transform="translate(32 32) scale(1.14) translate(-32 -30.5)"><g transform="rotate(30 32 34)"><path d="M27.6 44.5 C27.6 49.5 32 55.5 32 55.5 C32 55.5 36.4 49.5 36.4 44.5 Z" fill="#b06a86"/><path d="M22.6 33.2 C18.6 36.6 15.6 41.4 14.8 47 C18.4 45.2 22.4 44.3 25.8 44.2 Z" fill="#f6dfe4"/><path d="M41.4 33.2 C45.4 36.6 48.4 41.4 49.2 47 C45.6 45.2 41.6 44.3 38.2 44.2 Z" fill="#f6dfe4"/><path d="M32 5 C35.6 12.5 42.5 21 42.5 29.5 C42.5 34.6 40.6 39 38.6 43 L25.4 43 C23.4 39 21.5 34.6 21.5 29.5 C21.5 21 28.4 12.5 32 5 Z" fill="#f6dfe4"/><path d="M32 12 L32 26.5" stroke="#3e1528" stroke-width="1.7" stroke-linecap="round" fill="none"/><circle cx="32" cy="29.6" r="3.1" fill="#3e1528"/></g></g></svg>

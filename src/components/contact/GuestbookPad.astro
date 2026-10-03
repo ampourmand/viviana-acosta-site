@@ -1,0 +1,266 @@
+---
+/**
+ * Sign the guestbook: a small sheet of paper visitors can write or doodle on
+ * in real ink (mouse, finger, or pencil with true pressure). The drawing is
+ * serialized as a compact SVG string into a hidden field, so it travels with
+ * whatever <form> this component sits in. Entirely optional.
+ */
+interface Props {
+  /** Unique per page; ties the labels to the drawing surface. */
+  id?: string;
+  /** Name of the hidden form field that carries the drawing. */
+  name?: string;
+  class?: string;
+}
+const { id = 'guestbook', name = 'guestbook-ink', class: className } = Astro.props;
+
+const rules = [70, 110, 150, 190, 230, 270];
+const inks = [
+  { key: 'wine', label: 'Wine ink' },
+  { key: 'burgundy', label: 'Burgundy ink' },
+  { key: 'mauve', label: 'Mauve ink' },
+];
+---
+
+<div class:list={['guestbook', className]} data-guestbook data-empty="true">
+  <div class="gb-head">
+    <p class="eyebrow" id={`${id}-label`}>Sign the guestbook</p>
+    <p class="gb-help" id={`${id}-help`}>
+      Optional. Use your mouse, finger, or pencil. Your note is sent with your message.
+    </p>
+  </div>
+
+  <div class="gb-pad" data-gb-pad tabindex="-1">
+    <svg
+      class="gb-svg"
+      data-gb-svg
+      viewBox="0 0 600 320"
+      role="img"
+      aria-label="Guestbook page, empty"
+      aria-describedby={`${id}-help`}
+    >
+      <g class="gb-rules" aria-hidden="true">
+        {rules.map((y) => <line x1="28" x2="572" y1={y} y2={y} />)}
+      </g>
+      <text class="gb-hint t-hand" x="300" y="183" text-anchor="middle" aria-hidden="true">
+        Write or doodle a note
+      </text>
+      <g data-gb-strokes></g>
+    </svg>
+  </div>
+
+  <div class="gb-controls">
+    <div class="gb-inks" role="group" aria-label="Ink color">
+      {
+        inks.map((ink, i) => (
+          <button
+            type="button"
+            class="gb-ink"
+            data-gb-ink={ink.key}
+            aria-pressed={i === 0 ? 'true' : 'false'}
+            aria-label={ink.label}
+            title={ink.label}
+            style={`--swatch: var(--${ink.key})`}
+          />
+        ))
+      }
+    </div>
+    <button type="button" class="gb-btn ui" data-gb-undo disabled>Undo</button>
+    <button type="button" class="gb-btn ui" data-gb-clear disabled>Clear</button>
+    <p class="gb-status ui" data-gb-status role="status" aria-live="polite"></p>
+  </div>
+
+  <input type="hidden" name={name} value="" data-gb-field />
+</div>
+
+<style>
+  .guestbook {
+    display: block;
+  }
+
+  .gb-head {
+    margin-block-end: var(--space-3);
+  }
+
+  .gb-help {
+    margin-block-start: var(--space-1);
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--text-2);
+  }
+
+  /* The page: a physical sheet, so it gets a physical shadow. */
+  .gb-pad {
+    position: relative;
+    /* The ratio belongs to the drawing surface, so the border sits outside it. */
+    box-sizing: content-box;
+    aspect-ratio: 600 / 320;
+    background: var(--paper-print);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-rest);
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .gb-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    /* Drawing never scrolls or zooms the page. */
+    touch-action: none;
+  }
+
+  .gb-rules line {
+    stroke: var(--line);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .gb-hint {
+    font-size: 25px;
+    fill: var(--text-3);
+    opacity: 0.6;
+    pointer-events: none;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+
+  .guestbook[data-empty='false'] .gb-hint {
+    opacity: 0;
+  }
+
+  /* Strokes are created at runtime, so they sit outside the style scope. */
+  .gb-pad :global(.gb-stroke) {
+    fill: var(--stroke-ink, var(--pen-ink));
+    transition: fill 1.2s ease-out;
+  }
+
+  /* Wet ink: darker than it will dry, tinted by the chosen ink. */
+  .gb-pad :global(.gb-stroke.is-wet) {
+    fill: var(--pen-ink-wet);
+    fill: color-mix(in srgb, var(--pen-ink-wet) 62%, var(--stroke-ink, var(--pen-ink)));
+    transition: none;
+  }
+
+  .gb-pad :global(.gb-stroke.is-rejected) {
+    opacity: 0;
+    transition: opacity 280ms ease-out;
+  }
+
+  .gb-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-2);
+    margin-block-start: var(--space-3);
+  }
+
+  .gb-inks {
+    display: flex;
+    align-items: center;
+    margin-inline: -0.4rem var(--space-2);
+  }
+
+  /* 40px target, 20px well of ink. */
+  .gb-ink {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  .gb-ink::before {
+    content: '';
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background: var(--swatch);
+    transition:
+      transform 100ms ease-out,
+      box-shadow var(--dur-quick) var(--ease-out);
+  }
+
+  .gb-ink:hover::before {
+    box-shadow:
+      0 0 0 3px var(--ground),
+      0 0 0 4px var(--line-strong);
+  }
+
+  .gb-ink[aria-pressed='true']::before {
+    box-shadow:
+      0 0 0 3px var(--ground),
+      0 0 0 5px var(--focus-ring);
+  }
+
+  .gb-ink:active::before {
+    transform: scale(0.88);
+  }
+
+  .gb-btn {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.9rem;
+    color: var(--text-2);
+    border-radius: var(--radius);
+    transition:
+      color var(--dur-quick) var(--ease-out),
+      transform 100ms ease-out;
+  }
+
+  .gb-btn:hover:not(:disabled) {
+    color: var(--accent);
+  }
+
+  .gb-btn:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+
+  .gb-btn:disabled {
+    color: var(--text-3);
+    opacity: 0.55;
+    cursor: default;
+  }
+
+  .gb-status {
+    flex: 1 1 12rem;
+    min-height: 1.3em;
+    font-size: 0.85rem;
+    line-height: 1.3;
+    text-align: end;
+    color: var(--text-2);
+  }
+
+  @media (max-width: 540px) {
+    .gb-status {
+      flex-basis: 100%;
+      text-align: start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gb-pad :global(.gb-stroke),
+    .gb-pad :global(.gb-stroke.is-rejected),
+    .gb-hint {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { registerModule } from '@lib/transitions/vt';
+  import { mountGuestbookPad } from '@lib/ink/pad';
+
+  registerModule({
+    init() {
+      const cleanups = Array.from(
+        document.querySelectorAll<HTMLElement>('[data-guestbook]'),
+        (root) => mountGuestbookPad(root),
+      );
+      return () => cleanups.forEach((fn) => fn());
+    },
+  });
+</script>

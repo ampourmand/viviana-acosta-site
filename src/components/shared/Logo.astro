@@ -1,0 +1,38 @@
+---
+/**
+ * The mark: a fountain pen nib that is also a rocket. Colors come from the
+ * surface it sits on (--mark-ink / --mark-soft / --ground), so the same
+ * component is wine on paper and blush on wine.
+ */
+import { nibRocket } from '@data/brand';
+
+interface Props {
+  size?: number;
+  cloud?: boolean;
+  class?: string;
+}
+const { size = 28, cloud = false, class: className, ...rest } = Astro.props;
+const inner = nibRocket(
+  { ink: 'var(--mark-ink)', soft: 'var(--mark-soft)', paper: 'var(--ground)' },
+  { cloud },
+);
+---
+
+<svg
+  class:list={['logo-mark', className]}
+  viewBox="0 0 64 64"
+  width={size}
+  height={size}
+  aria-hidden="true"
+  focusable="false"
+  set:html={inner}
+  {...rest}
+/>
+
+<style>
+  .logo-mark {
+    display: block;
+    flex: none;
+    overflow: visible;
+  }
+</style>

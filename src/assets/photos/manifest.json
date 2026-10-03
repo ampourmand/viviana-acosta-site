@@ -389,14 +389,9 @@
     "height": 340,
     "profile": "natural"
   },
-  "portrait-about.jpg": {
-    "width": 2048,
-    "height": 2245,
-    "profile": "editorial"
-  },
-  "portrait-home-collage.jpg": {
-    "width": 2000,
-    "height": 2000,
+  "portrait-headshot.jpg": {
+    "width": 800,
+    "height": 800,
     "profile": "natural"
   }
 }

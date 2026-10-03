@@ -13,6 +13,7 @@ const { title, description, ogImage, noindex } = Astro.props;
 ---
 
 <Base {title} {description} {ogImage} {noindex}>
+  <slot name="head" slot="head" />
   <slot name="overlay" />
   <SiteHeader />
   <main id="main">

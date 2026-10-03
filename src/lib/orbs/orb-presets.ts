@@ -6,7 +6,8 @@ export type OrbPresetName =
   | 'sectionMarker'
   | 'hoverAccent'
   | 'formPending'
-  | 'planet';
+  | 'planet'
+  | 'deskGlobe';
 
 const presets: Record<OrbPresetName, Partial<OrbConfig>> = {
   /** The large constellation presence beside the hero. */
@@ -50,7 +51,20 @@ const presets: Record<OrbPresetName, Partial<OrbConfig>> = {
     speed: 0.25,
     seed: 17,
   },
+  /** The little globe at the end of the bookshelf. Sized by its stand. */
+  deskGlobe: {
+    mode: 'fib',
+    size: 120,
+    count: 300,
+    speed: 0.3,
+    seed: 23,
+  },
 };
+
+/** A preset's drawn size in css px. Safe at build time (reads no browser state). */
+export function presetSize(name: OrbPresetName): number {
+  return presets[name].size ?? 48;
+}
 
 export function presetConfig(name: OrbPresetName): Partial<OrbConfig> {
   const base = { ...presets[name] };

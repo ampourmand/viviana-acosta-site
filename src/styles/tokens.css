@@ -1,30 +1,65 @@
 /* ---------------------------------------------------------------------------
-   Design tokens. One palette, one scale, one motion vocabulary.
-   Deep violet ink, clouds of purple glinting pink and blue.
-   Orchid means "you can touch this." Periwinkle means "ornament."
+   Design tokens. Viviana's own colors: blush purples, wine, burgundy, tan
+   pinks, on warm paper. The site reads like the inside of her book: paper
+   pages and wine ink, with deep wine "cover" sections for drama.
+
+   Burgundy means "you can touch this." Mauve means "ornament."
 --------------------------------------------------------------------------- */
 :root {
-  /* Canvas: deep aubergine violet, never flat black */
-  --ink-950: #151021;
-  --ink-900: #1b1530;
-  --ink-800: #251d3f;
-  --ink-well: #100c1a;
+  /* Her palette, sampled from her headshot, banner, and reference photo */
+  --blush: #e2c4cd;
+  --rose: #c98a9b;
+  --mauve: #a86e93;
+  --tan: #d3a796;
+  --wine: #6e2a48;
+  --burgundy: #7e2136;
+  --wine-deep: #3e1528;
 
-  /* Text: soft lavender paper, never pure white */
-  --text-1: #ece7f6;
-  --text-2: #b4abc9;
-  --text-3: #7e7495;
+  /* Ground: warm blush paper, never pure white */
+  --ground: #f8f1ec;
+  --surface-1: #f3e7e3;
+  --surface-2: #fdf8f5;
+  --well: #efdfdc;
+
+  /* Text: wine ink, never pure black */
+  --text-1: #2f1622;
+  --text-2: #684856;
+  --text-3: #866876;
 
   /* Accent */
-  --accent: #d9a2c9;
-  --accent-bright: #eebede;
-  --ornament: #8fa3e8;
-  --line: rgb(197 168 226 / 0.16);
-  --line-strong: rgb(197 168 226 / 0.36);
-  --focus-ring: rgb(238 190 222 / 0.7);
+  --accent: #7e2136;
+  --accent-bright: #a53253;
+  --eyebrow: #8b4a6b;
+  --ornament: #a86e93;
+  --line: rgb(110 42 72 / 0.15);
+  --line-strong: rgb(110 42 72 / 0.34);
+  --focus-ring: rgb(126 33 54 / 0.55);
+  --selection: rgb(201 138 155 / 0.36);
 
-  /* Ink for the signature artwork */
-  --sig-ink: #efe9f8;
+  /* Handwriting ink: wet when fresh, dries a touch lighter */
+  --pen-ink: #4a1a30;
+  --pen-ink-wet: #2c0d1b;
+
+  /* Stipple orbs: ink dots on paper (r g b triplets for canvas) */
+  --orb-near: 74 26 48;
+  --orb-far: 205 170 182;
+  --orb-accent: 168 110 147;
+
+  /* Physical shadows only (books, photos, the pen): soft and wine-tinted.
+     Flat UI never gets a shadow; things you could pick up do. */
+  --shadow-color: 62 21 40;
+  --shadow-rest: 0 1px 1px rgb(var(--shadow-color) / 0.08), 0 4px 10px rgb(var(--shadow-color) / 0.08),
+    0 14px 28px rgb(var(--shadow-color) / 0.07);
+  --shadow-lift: 0 2px 3px rgb(var(--shadow-color) / 0.08), 0 12px 24px rgb(var(--shadow-color) / 0.12),
+    0 32px 60px rgb(var(--shadow-color) / 0.14);
+
+  /* Materials */
+  --paper-print: #fffdfb;
+  --radius: 4px;
+
+  /* The mark (nib rocket) */
+  --mark-ink: #6e2a48;
+  --mark-soft: #d9a3b4;
 
   /* Spacing: 4px ladder */
   --space-1: 0.25rem;
@@ -53,15 +88,50 @@
 
   /* Chrome */
   --header-h: 4.25rem;
-  --header-bg: rgb(21 16 33 / 0.72);
+  --header-bg: rgb(248 241 236 / 0.78);
   --header-blur: 18px;
 
   /* Z-layers */
   --z-base: 0;
   --z-raised: 10;
   --z-header: 100;
+  --z-ribbon: 110;
   --z-intro: 1000;
   --z-skiplink: 1100;
+}
+
+/* Deep wine surfaces (the "cover" sections): every token flips so the same
+   components read correctly without knowing where they are. */
+.surface-wine {
+  --ground: #3e1528;
+  --surface-1: #4a1b31;
+  --surface-2: #55223a;
+  --well: #33101f;
+  --text-1: #f8eaec;
+  --text-2: #dfc0c9;
+  --text-3: #bd98a6;
+  --accent: #f2c3cd;
+  --accent-bright: #ffe0e6;
+  --eyebrow: #e3aebb;
+  --ornament: #d9a3b9;
+  --line: rgb(242 195 205 / 0.18);
+  --line-strong: rgb(242 195 205 / 0.4);
+  --focus-ring: rgb(255 224 230 / 0.7);
+  --selection: rgb(242 195 205 / 0.3);
+  --pen-ink: #f6dfe4;
+  --pen-ink-wet: #ffffff;
+  --orb-near: 248 226 231;
+  --orb-far: 122 62 88;
+  --orb-accent: 226 174 187;
+  --mark-ink: #f6dfe4;
+  --mark-soft: #b06a86;
+  --shadow-color: 20 4 12;
+  --shadow-rest: 0 1px 1px rgb(var(--shadow-color) / 0.2), 0 4px 10px rgb(var(--shadow-color) / 0.22),
+    0 14px 28px rgb(var(--shadow-color) / 0.2);
+  --shadow-lift: 0 2px 3px rgb(var(--shadow-color) / 0.22), 0 12px 24px rgb(var(--shadow-color) / 0.3),
+    0 32px 60px rgb(var(--shadow-color) / 0.32);
+  background-color: var(--ground);
+  color: var(--text-1);
 }
 
 /* Preference overrides flow through the same tokens the components consume. */
@@ -75,16 +145,23 @@
 
 @media (prefers-reduced-transparency: reduce) {
   :root {
-    --header-bg: #1b1530;
+    --header-bg: #f8f1ec;
     --header-blur: 0px;
   }
 }
 
 @media (prefers-contrast: more) {
   :root {
-    --text-2: #d6cfe6;
-    --text-3: #ada3c4;
-    --line: rgb(197 168 226 / 0.44);
-    --line-strong: rgb(197 168 226 / 0.62);
+    --text-2: #4d2f3c;
+    --text-3: #684856;
+    --eyebrow: #6e2a48;
+    --line: rgb(110 42 72 / 0.42);
+    --line-strong: rgb(110 42 72 / 0.62);
+  }
+  .surface-wine {
+    --text-2: #f3dfe4;
+    --text-3: #dfc0c9;
+    --line: rgb(242 195 205 / 0.45);
+    --line-strong: rgb(242 195 205 / 0.65);
   }
 }

@@ -11,8 +11,9 @@ let running = false;
 
 function frame(now: number) {
   if (!running) return;
-  // Cap delta so a background-tab return doesn't explode simulations.
-  const dt = Math.min(32, now - last || 16.7);
+  // Cap delta so a background-tab return doesn't explode simulations. The cap
+  // is 20fps: slower than that, motion slows down instead of skipping.
+  const dt = Math.min(50, now - last || 16.7);
   last = now;
   for (const fn of subscribers) fn(now, dt);
   if (subscribers.size > 0) {

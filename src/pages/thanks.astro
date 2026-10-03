@@ -1,12 +1,16 @@
 ---
 import Page from '../layouts/Page.astro';
 import Orb from '@components/orbs/Orb.astro';
+import Ink from '@components/shared/Ink.astro';
 ---
 
 <Page title="Thank you" description="Message received." noindex>
   <section class="section container thanks">
     <Orb preset="formPending" size={44} />
-    <h1 class="t-4">Thank you!</h1>
+    <h1 class="thanks-title">
+      <span class="visually-hidden">Thank you!</span>
+      <Ink piece="thanks" decorative class="thanks-ink" />
+    </h1>
     <p class="note">Your message is on its way. Viviana will be in touch.</p>
     <a class="back ui" href="/">Back to the site</a>
   </section>
@@ -20,6 +24,10 @@ import Orb from '@components/orbs/Orb.astro';
     gap: var(--space-4);
     min-height: 46dvh;
     justify-content: center;
+  }
+
+  .thanks-title {
+    width: min(20rem, 80%);
   }
 
   .note {
