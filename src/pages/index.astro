@@ -22,9 +22,9 @@ const covers: Record<string, ImageMetadata> = {
   'panela-plantation': coverPanela,
 };
 const hrefs: Record<string, string> = {
-  ascension: '/writing/ascension',
-  'i-cant-see': '/writing/picture-books',
-  'panela-plantation': '/writing/short-fiction',
+  ascension: '/writing/ascension/',
+  'i-cant-see': '/writing/picture-books/',
+  'panela-plantation': '/writing/short-fiction/',
 };
 
 const works = (await getCollection('works', (w) => w.data.featured)).sort(
@@ -78,7 +78,7 @@ const latest = posts[0];
     <p class="t-2 intro-lede">{bio[0]}</p>
     <div class="intro-rest">
       <p class="intro-second">{bio[1]}</p>
-      <a class="more ui" href="/about">More about Viviana</a>
+      <a class="more ui" href="/about/">More about Viviana</a>
     </div>
   </section>
 
@@ -90,7 +90,7 @@ const latest = posts[0];
           title={work.data.title}
           subtitle={work.data.subtitle}
           status={work.data.status}
-          href={hrefs[work.id] ?? '/writing'}
+          href={hrefs[work.id] ?? '/writing/'}
           cover={covers[work.id] ?? null}
           reverse={work.data.category === 'short-fiction'}
         >
@@ -99,8 +99,8 @@ const latest = posts[0];
       ))
     }
     <p class="all-writing">
-      <a class="more ui" href="/writing">All writing</a>
-      <a class="more ui" href="/writing/bibliography">Bibliography</a>
+      <a class="more ui" href="/writing/">All writing</a>
+      <a class="more ui" href="/writing/bibliography/">Bibliography</a>
     </p>
   </section>
 
@@ -112,11 +112,11 @@ const latest = posts[0];
           title={latest.data.title}
           description={latest.data.description}
           date={latest.data.date}
-          href={`/blog/${latest.id}`}
+          href={`/blog/${latest.id}/`}
           cover={latest.data.cover}
         />
         <p class="all-writing">
-          <a class="more ui" href="/blog">All posts</a>
+          <a class="more ui" href="/blog/">All posts</a>
         </p>
       </section>
     )
@@ -126,7 +126,7 @@ const latest = posts[0];
     <SectionHeading eyebrow="Causes" title="Join me in supporting these worthy organizations" />
     <p class="prose-width causes-line">
       The League of Women Voters, the American Civil Liberties Union, and Project Street Vet.
-      <a href="/causes">See why they matter</a>.
+      <a href="/causes/">See why they matter</a>.
     </p>
   </section>
 </Page>

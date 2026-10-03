@@ -51,21 +51,21 @@ const shelfOrder: Category[] = ['ya-novel', 'picture-book', 'short-fiction', 'po
 
 /** Shelf-edge labels. Where a section has its own page, the label leads there. */
 const shelfLabels: Record<Category, { label: string; href?: string }> = {
-  'ya-novel': { label: 'Young Adult', href: '/writing/ascension' },
-  'picture-book': { label: 'Picture Books', href: '/writing/picture-books' },
-  'short-fiction': { label: 'Short Fiction', href: '/writing/short-fiction' },
+  'ya-novel': { label: 'Young Adult', href: '/writing/ascension/' },
+  'picture-book': { label: 'Picture Books', href: '/writing/picture-books/' },
+  'short-fiction': { label: 'Short Fiction', href: '/writing/short-fiction/' },
   poetry: { label: 'Poetry' },
   other: { label: 'Uncatalogued' },
 };
 
 /** Where a book's "read more" leads: the page that presents it, or the full
     list for a work that has no presentation yet. */
-const bibliography = { href: '/writing/bibliography', label: 'See the bibliography' };
+const bibliography = { href: '/writing/bibliography/', label: 'See the bibliography' };
 function pageFor(id: string, category: Category, hasBody: boolean) {
-  if (id === 'ascension') return { href: '/writing/ascension', label: 'Open the Ascension page' };
+  if (id === 'ascension') return { href: '/writing/ascension/', label: 'Open the Ascension page' };
   if (!hasBody) return bibliography;
-  if (category === 'picture-book') return { href: '/writing/picture-books', label: 'Open Picture Books' };
-  if (category === 'short-fiction') return { href: '/writing/short-fiction', label: 'Open Short Fiction' };
+  if (category === 'picture-book') return { href: '/writing/picture-books/', label: 'Open Picture Books' };
+  if (category === 'short-fiction') return { href: '/writing/short-fiction/', label: 'Open Short Fiction' };
   return bibliography;
 }
 

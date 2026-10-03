@@ -18,7 +18,7 @@ const posts = (await getCollection('blog', (p) => !p.data.draft)).sort(
           title={post.data.title}
           description={post.data.description}
           date={post.data.date}
-          href={`/blog/${post.id}`}
+          href={`/blog/${post.id}/`}
           cover={post.data.cover}
         />
       ))

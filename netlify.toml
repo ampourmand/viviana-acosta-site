@@ -6,29 +6,47 @@
   NODE_VERSION = "22"
 
 # Old Squarespace URLs keep working (including the site's real typo'd slug).
+# Each goes straight to the page's own URL (with its trailing slash), so it
+# arrives in one hop. Every URL in the old site's sitemap is covered.
+[[redirects]]
+  from = "/home"
+  to = "/"
+  status = 301
+
 [[redirects]]
   from = "/picture-books"
-  to = "/writing/picture-books"
+  to = "/writing/picture-books/"
   status = 301
 
 [[redirects]]
   from = "/short-fiction"
-  to = "/writing/short-fiction"
+  to = "/writing/short-fiction/"
   status = 301
 
 [[redirects]]
   from = "/young-adul-fiction"
-  to = "/writing/ascension"
+  to = "/writing/ascension/"
   status = 301
 
 [[redirects]]
   from = "/young-adult-fiction"
-  to = "/writing/ascension"
+  to = "/writing/ascension/"
   status = 301
 
 [[redirects]]
   from = "/bibliography"
-  to = "/writing/bibliography"
+  to = "/writing/bibliography/"
+  status = 301
+
+# Squarespace tag and category listings have no counterpart; the blog does.
+[[redirects]]
+  from = "/blog/tag/*"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/category/*"
+  to = "/blog/"
   status = 301
 
 # Fonts are content-hashed by name convention; cache hard.

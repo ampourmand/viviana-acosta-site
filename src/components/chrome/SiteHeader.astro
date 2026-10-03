@@ -1,10 +1,14 @@
 ---
 import { site } from '@data/site';
 import Logo from '@components/shared/Logo.astro';
-// Build output uses trailing-slash pathnames; normalize before comparing.
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const isCurrent = (href: string) =>
-  href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
+// Pages live at trailing-slash URLs (/about/) and links point there; compare
+// paths with the slash removed so either form matches.
+const bare = (p: string) => p.replace(/\/$/, '') || '/';
+const path = bare(Astro.url.pathname);
+const isCurrent = (href: string) => {
+  const target = bare(href);
+  return target === '/' ? path === '/' : path === target || path.startsWith(target + '/');
+};
 // The section links ride along on the Writing sub-pages. The Writing page
 // itself is the bookshelf, whose shelf labels already lead to each section.
 const onWritingSection = path.startsWith('/writing/');
@@ -65,7 +69,7 @@ const onWritingSection = path.startsWith('/writing/');
   onWritingSection && (
     <nav class="writing-subnav ui container" aria-label="Writing sections">
       {site.writingNav.map((item) => (
-        <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
+        <a href={item.href} aria-current={path === bare(item.href) ? 'page' : undefined}>
           {item.label}
         </a>
       ))}
