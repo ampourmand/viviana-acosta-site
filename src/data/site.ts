@@ -40,6 +40,5 @@ export const site = {
     { label: 'Picture Books', href: '/writing/picture-books/' },
     { label: 'Short Fiction', href: '/writing/short-fiction/' },
     { label: 'Young Adult Novel', href: '/writing/ascension/' },
-    { label: 'Bibliography', href: '/writing/bibliography/' },
   ],
 } as const;

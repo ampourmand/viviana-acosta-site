@@ -57,15 +57,15 @@ const shelfLabels: Partial<Record<Category, { label: string; href: string }>> = 
   'short-fiction': { label: 'Short Fiction', href: '/writing/short-fiction/' },
 };
 
-/** Where a book's "read more" leads: the page that presents it, or the full
-    list for a work that has no presentation yet. */
-const bibliography = { href: '/writing/bibliography/', label: 'See the bibliography' };
+/** Where a book's "read more" leads: the page that presents it. A work with
+    no page of its own yet has no link. */
+const sectionPages: Partial<Record<Category, { href: string; label: string }>> = {
+  'picture-book': { href: '/writing/picture-books/', label: 'Open Picture Books' },
+  'short-fiction': { href: '/writing/short-fiction/', label: 'Open Short Fiction' },
+};
 function pageFor(id: string, category: Category, hasBody: boolean) {
   if (id === 'ascension') return { href: '/writing/ascension/', label: 'Open the Ascension page' };
-  if (!hasBody) return bibliography;
-  if (category === 'picture-book') return { href: '/writing/picture-books/', label: 'Open Picture Books' };
-  if (category === 'short-fiction') return { href: '/writing/short-fiction/', label: 'Open Short Fiction' };
-  return bibliography;
+  return hasBody ? (sectionPages[category] ?? null) : null;
 }
 
 /** Spine geometry in em of the shelf's font size. Thickness follows the
@@ -120,6 +120,9 @@ const books = await Promise.all(
       meta: metaEntries(work.data).filter((entry) => entry.label !== 'Status'),
       cover: covers[work.id] ?? null,
       link: pageFor(work.id, category, hasBody),
+      // Without script a spine is a plain link: to its page, else its section, else the shelf.
+      spineHref:
+        pageFor(work.id, category, hasBody)?.href ?? shelfLabels[category]?.href ?? '/writing/',
       ...(cloths[work.id] ?? fallbackCloth),
       thickness: thickness.toFixed(3),
       height: height.toFixed(3),
@@ -162,7 +165,7 @@ const pageMark = nibRocket({
             {group.books.map((b) => (
               <a
                 class="spine"
-                href={b.link.href}
+                href={b.spineHref}
                 data-book={b.id}
                 draggable="false"
                 aria-label={`${b.title}. ${b.categoryLabel}, ${b.status.toLowerCase()}.`}
@@ -269,7 +272,7 @@ const pageMark = nibRocket({
               </dl>
             )}
             <div class="sbp-foot">
-              <a class="sbp-link ui" href={b.link.href}>{b.link.label}</a>
+              {b.link && <a class="sbp-link ui" href={b.link.href}>{b.link.label}</a>}
               <svg class="sbp-mark" viewBox="0 0 64 64" aria-hidden="true" set:html={pageMark} />
             </div>
           </div>
@@ -1050,6 +1053,7 @@ const pageMark = nibRocket({
     flex: none;
     width: 2.6em;
     height: 2.6em;
+    margin-inline-start: auto;
   }
 
   /* On paper: keep the cloth and the ledge, and never the open stage. */

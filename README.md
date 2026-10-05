@@ -62,6 +62,14 @@ give it a cloth and foil color in `cloths`, and cover art in `covers`.
 
 **Bio, experience, socials, nav:** `src/data/about.ts` and `src/data/site.ts`.
 
+**The bibliography is hidden** until Viviana's list is ready. Its page waits at
+`src/pages/writing/_bibliography.astro` (the underscore keeps Astro from
+building it) and `netlify.toml` sends its address to the Writing page. To bring
+it back: rename the file to `bibliography.astro`, delete that redirect, and put
+the links back (the Writing sub-menu in `src/data/site.ts`, the home page, the
+line under the shelf, and `pageFor` in `src/components/writing/Bookshelf.astro`
+for works that have no page of their own).
+
 **Causes:** JSON files in `src/content/causes/`.
 
 **Contact form choices:** the "How did you hear about us?" options live in

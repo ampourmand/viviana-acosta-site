@@ -151,7 +151,8 @@ test.describe('the shelf', () => {
     await pull(page, 'consuelo-dolores');
     const dialog = page.getByRole('dialog', { name: 'Consuelo Dolores' });
     await expect(dialog.getByText('In the notebook')).toBeVisible();
-    await expect(dialog.getByRole('link', { name: 'See the bibliography' })).toBeVisible();
+    // No page of its own yet, so no link: nothing to follow into a dead end.
+    await expect(dialog.locator('.sbp-link')).toHaveCount(0);
     await expect(dialog.locator('.sbp-body')).toHaveCount(0);
   });
 
@@ -246,16 +247,16 @@ test.describe('the shelf', () => {
   }) => {
     test.skip(isMobile, 'hardware keyboard flow');
     await gotoShelf(page);
-    await spine(page, 'time-to-tell').focus();
+    await spine(page, 'besitos-de-coco').focus();
     await page.keyboard.press('Enter');
     await expect(stage(page)).toHaveJSProperty('open', true);
     await expect(page.locator('[data-sb-close]')).toBeFocused();
     // Safari keeps plain Tab for form controls; Option+Tab walks links.
     await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
-    await expect(page.getByRole('link', { name: 'See the bibliography' })).toBeFocused();
+    await expect(page.getByRole('link', { name: 'Open Short Fiction' })).toBeFocused();
     await page.keyboard.press('Escape');
-    await expectBackOnShelf(page, 'time-to-tell');
-    await expect(spine(page, 'time-to-tell')).toBeFocused();
+    await expectBackOnShelf(page, 'besitos-de-coco');
+    await expect(spine(page, 'besitos-de-coco')).toBeFocused();
   });
 
   test('a modified click is left to the browser', async ({ page, context, isMobile }) => {

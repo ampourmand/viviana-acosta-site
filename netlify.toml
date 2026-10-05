@@ -38,6 +38,14 @@
   to = "/writing/bibliography/"
   status = 301
 
+# The bibliography is hidden until Viviana's list is ready (the page lives at
+# src/pages/writing/_bibliography.astro, which Astro skips). Until then its
+# address leads to the shelf; 302 so no browser remembers it.
+[[redirects]]
+  from = "/writing/bibliography"
+  to = "/writing/"
+  status = 302
+
 # Squarespace tag and category listings have no counterpart; the blog does.
 [[redirects]]
   from = "/blog/tag/*"
