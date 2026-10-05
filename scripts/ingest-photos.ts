@@ -30,7 +30,6 @@ const personal: Record<string, string> = {
   'FullSizeRender 3.HEIC': 'photo-smokies-1',
   'FullSizeRender 4.HEIC': 'photo-smokies-2',
   'image000000.JPG': 'photo-husky-court',
-  'IMG_2985.HEIC': 'photo-stationery-fest-daughter',
   'IMG_6855.JPG': 'photo-husky-hallway',
   'IMG_7158.HEIC': 'photo-flag-selfie',
   'IMG_7163.HEIC': 'photo-husky-treadmill',
@@ -38,8 +37,12 @@ const personal: Record<string, string> = {
   'IMG_7350.HEIC': 'photo-desert-hike-1',
   'IMG_7351.HEIC': 'photo-desert-hike-2',
   'IMG_7358.HEIC': 'photo-desert-cactus',
-  'IMG_7442.HEIC': 'photo-leuchtturm-pens',
   'IMG_7484.HEIC': 'photo-stationery-liberty',
+};
+
+/** Edges trimmed off (fractions of the upright image) so only Viviana is in frame. */
+const trims: Record<string, { bottom: number }> = {
+  'photo-smokies-1': { bottom: 0.14 },
 };
 
 /** Remote (rescued from Squarespace): which grade each gets. */
@@ -89,7 +92,14 @@ async function processImage(
   const ext = extname(srcPath).toLowerCase();
   const input = ext === '.heic' ? decodeHeic(srcPath, tmp) : srcPath;
   const outPath = join(OUT, `${slug}.jpg`);
-  const info = await applyGrade(sharp(input), profile)
+  let image = sharp(input);
+  const trim = trims[slug];
+  if (trim) {
+    const upright = await sharp(input).rotate().toBuffer({ resolveWithObject: true });
+    const height = Math.round(upright.info.height * (1 - trim.bottom));
+    image = sharp(upright.data).extract({ left: 0, top: 0, width: upright.info.width, height });
+  }
+  const info = await applyGrade(image, profile)
     .jpeg({ quality: 88, mozjpeg: true })
     .toFile(outPath);
   manifest[`${slug}.jpg`] = { width: info.width, height: info.height, profile };

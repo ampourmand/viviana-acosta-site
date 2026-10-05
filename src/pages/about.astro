@@ -7,16 +7,14 @@ import Ink from '@components/shared/Ink.astro';
 import { bio, missionQuote, experience, education, memberships } from '@data/about';
 
 import portrait from '@assets/photos/portrait-headshot.jpg';
-import photoPens from '@assets/photos/photo-leuchtturm-pens.jpg';
 import photoDesert from '@assets/photos/photo-desert-hike-1.jpg';
 import photoHusky from '@assets/photos/photo-husky-hallway.jpg';
 import photoSmokies from '@assets/photos/photo-smokies-1.jpg';
 
 const strip = [
-  { src: photoPens, alt: 'Viviana and her daughter holding giant pens at Stationery Fest in Brooklyn' },
   { src: photoDesert, alt: 'Viviana hiking among saguaro cactus in the desert' },
   { src: photoHusky, alt: 'Her husky sitting in a hallway' },
-  { src: photoSmokies, alt: 'Viviana in the Smoky Mountains' },
+  { src: photoSmokies, alt: 'Viviana in the Smoky Mountains', focus: '58% 50%' },
 ];
 ---
 
@@ -81,13 +79,13 @@ const strip = [
     <SectionHeading eyebrow="Off the Page" title="Space, stationery, dogs, and trails" />
     <ul class="photo-strip" role="list">
       {
-        strip.map((photo) => (
-          <li>
+        strip.map((photo, i) => (
+          <li style={'focus' in photo ? `--focus: ${photo.focus}` : undefined}>
             <EditorialImage
               src={photo.src}
               alt={photo.alt}
               widths={[300, 500, 800]}
-              sizes="(max-width: 700px) 45vw, 300px"
+              sizes={i === 2 ? '(max-width: 860px) 90vw, 380px' : '(max-width: 860px) 45vw, 380px'}
             />
           </li>
         ))
@@ -173,7 +171,7 @@ const strip = [
 
   .photo-strip {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--space-4);
     padding: 0;
     list-style: none;
@@ -185,10 +183,18 @@ const strip = [
     border-radius: 4px;
   }
 
+  /* The picture element is inline by default and has no height of its own,
+     so a wide photo would sit short in its frame instead of filling it. */
+  .photo-strip :global(picture) {
+    display: block;
+    height: 100%;
+  }
+
   .photo-strip :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: var(--focus, 50% 50%);
   }
 
   @media (max-width: 860px) {
@@ -201,6 +207,11 @@ const strip = [
     }
     .photo-strip {
       grid-template-columns: repeat(2, 1fr);
+    }
+    /* Two across on a phone; the third gets the whole row. */
+    .photo-strip li:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      aspect-ratio: 3 / 2;
     }
   }
 </style>

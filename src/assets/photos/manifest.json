@@ -1,7 +1,7 @@
 {
   "photo-smokies-1.jpg": {
     "width": 2560,
-    "height": 1289,
+    "height": 1109,
     "profile": "editorial"
   },
   "photo-smokies-2.jpg": {
@@ -12,11 +12,6 @@
   "photo-husky-court.jpg": {
     "width": 1204,
     "height": 1599,
-    "profile": "editorial"
-  },
-  "photo-stationery-fest-daughter.jpg": {
-    "width": 1920,
-    "height": 2560,
     "profile": "editorial"
   },
   "photo-husky-hallway.jpg": {
@@ -50,11 +45,6 @@
     "profile": "editorial"
   },
   "photo-desert-cactus.jpg": {
-    "width": 1920,
-    "height": 2560,
-    "profile": "editorial"
-  },
-  "photo-leuchtturm-pens.jpg": {
     "width": 1920,
     "height": 2560,
     "profile": "editorial"
