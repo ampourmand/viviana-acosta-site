@@ -49,13 +49,12 @@ const fallbackCloth = { cloth: '#6e2a48', foil: '#f2c9d2' };
 
 const shelfOrder: Category[] = ['ya-novel', 'picture-book', 'short-fiction', 'poetry', 'other'];
 
-/** Shelf-edge labels. Where a section has its own page, the label leads there. */
-const shelfLabels: Record<Category, { label: string; href?: string }> = {
+/** Shelf-edge labels, each leading to its section's page. Poetry and the
+    other work stand on the shelf without one. */
+const shelfLabels: Partial<Record<Category, { label: string; href: string }>> = {
   'ya-novel': { label: 'Young Adult', href: '/writing/ascension/' },
   'picture-book': { label: 'Picture Books', href: '/writing/picture-books/' },
   'short-fiction': { label: 'Short Fiction', href: '/writing/short-fiction/' },
-  poetry: { label: 'Poetry' },
-  other: { label: 'Uncatalogued' },
 };
 
 /** Where a book's "read more" leads: the page that presents it, or the full
@@ -155,7 +154,10 @@ const pageMark = nibRocket({
   <div class="shelf" data-shelf>
     {
       groups.map((group, gi) => (
-        <div class:list={['group', { 'second-row': gi >= 2 }]} role="group" aria-label={group.label}>
+        <div
+          class:list={['group', { 'second-row': gi >= 2 }]}
+          {...(group.label ? { role: 'group', 'aria-label': group.label } : {})}
+        >
           <div class="books">
             {group.books.map((b) => (
               <a
@@ -175,10 +177,11 @@ const pageMark = nibRocket({
               </a>
             ))}
           </div>
-          <p class="group-label eyebrow">
-            {group.href && <a href={group.href}>{group.label}</a>}
-            {!group.href && group.label}
-          </p>
+          {group.label && (
+            <p class="group-label eyebrow">
+              <a href={group.href}>{group.label}</a>
+            </p>
+          )}
         </div>
       ))
     }
